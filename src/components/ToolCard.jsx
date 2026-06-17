@@ -1,0 +1,82 @@
+import React from 'react';
+import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
+import { Play } from 'lucide-react';
+import { categoryColors } from '../lib/contentStore';
+import { platforms } from '../lib/platformIcons';
+
+export default function ToolCard({ tool, locked, onPlayVideo }) {
+  const platformInfo = tool.platform ? platforms[tool.platform] : null;
+  const PlatformIcon = platformInfo?.icon;
+
+  const inner = (
+    <>
+      <div className="relative aspect-video bg-zinc-100 dark:bg-zinc-800 overflow-hidden rounded-xl mb-5">
+        <img src={tool.image} alt={tool.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        {tool.link?.type === 'video' && (
+          <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
+            <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
+              <Play className="w-5 h-5 text-brand-600 ml-0.5" fill="currentColor" />
+            </div>
+          </div>
+        )}
+      </div>
+      <div className="flex items-center gap-2 mb-3">
+        <span
+          className="inline-block text-xs font-bold px-2.5 py-1 rounded-full"
+          style={categoryColors[tool.category]}
+        >
+          {tool.category}
+        </span>
+        {platformInfo && (
+          <span
+            className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-1"
+            title={tool.platform}
+          >
+            {PlatformIcon ? (
+              <PlatformIcon className="w-full h-full text-brand-600" />
+            ) : (
+              <img
+                src={`https://cdn.simpleicons.org/${platformInfo.slug}`}
+                alt={tool.platform}
+                className="w-full h-full object-contain"
+              />
+            )}
+          </span>
+        )}
+      </div>
+      <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2">{tool.name}</h3>
+      {locked ? (
+        <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed filter blur-[3px] select-none pointer-events-none">
+          {tool.description}
+        </p>
+      ) : (
+        <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{tool.description}</p>
+      )}
+    </>
+  );
+
+  const className = "card-rich group block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800 hover:border-slate-200 dark:hover:border-zinc-700";
+
+  if (locked) {
+    return <div className={className}>{inner}</div>;
+  }
+
+  if (tool.link?.type === 'article') {
+    return <Link to={`/articles/${tool.link.value}`} className={className}>{inner}</Link>;
+  }
+
+  if (tool.link?.type === 'video') {
+    return (
+      <button onClick={() => onPlayVideo?.(tool.link.value)} className={`${className} text-left w-full`}>
+        {inner}
+      </button>
+    );
+  }
+
+  return (
+    <a href={tool.link?.value} target="_blank" rel="noopener noreferrer" className={className}>
+      {inner}
+    </a>
+  );
+}
