@@ -1,16 +1,18 @@
 import React, { useEffect } from 'react';
 import { motion, useMotionValue, useSpring, useTransform } from 'framer-motion';
-import { ArrowRight, FileSpreadsheet } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import StarField from './StarField';
 import MouseGlow from './MouseGlow';
+import ElegantShapes from './ElegantShapes';
+import MagnetizeWrap from './MagnetizeWrap';
 
 const stack = [
   { name: 'n8n', slug: 'n8n' },
   { name: 'Zapier', slug: 'zapier' },
   { name: 'Claude', slug: 'anthropic' },
-  { name: 'Excel', icon: FileSpreadsheet },
+  { name: 'Excel', slug: 'microsoftexcel' },
   { name: 'Google Sheets', slug: 'googlesheets' },
   { name: 'Airtable', slug: 'airtable' },
 ];
@@ -36,14 +38,7 @@ const Hero = () => {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-white dark:bg-[#04060a] transition-colors duration-300">
       <StarField />
       <MouseGlow color="rgba(10,150,80,0.12)" />
-
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background:
-            'radial-gradient(circle at 50% 20%, rgba(10,150,80,0.1), transparent 55%), radial-gradient(circle at 80% 70%, rgba(10,150,80,0.08), transparent 50%), radial-gradient(circle at 15% 75%, rgba(91,208,147,0.06), transparent 45%)',
-        }}
-      />
+      <ElegantShapes />
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-white dark:from-[#04060a] via-transparent to-white/40 dark:to-[#04060a]/40" />
 
       <motion.div
@@ -81,15 +76,17 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.6 }}
           >
-            <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
-              <Link
-                to={isAuthenticated ? '/tools' : '/login'}
-                className="btn-shine bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl shadow-brand-500/20 hover:shadow-2xl flex items-center group"
-              >
-                Get Started
-                <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
-              </Link>
-            </motion.div>
+            <MagnetizeWrap>
+              <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
+                <Link
+                  to={isAuthenticated ? '/tools' : '/login'}
+                  className="btn-shine bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl shadow-brand-500/20 hover:shadow-2xl flex items-center group"
+                >
+                  Get Started
+                  <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />
+                </Link>
+              </motion.div>
+            </MagnetizeWrap>
 
             <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
               <Link
@@ -108,25 +105,25 @@ const Hero = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <p className="font-rubik text-sm text-zinc-500 mb-10">Some of the tools we automate with</p>
-            <div className="flex flex-wrap items-center justify-center gap-10">
+            <p className="font-rubik text-sm text-zinc-500 mb-8">Some of the tools we automate with</p>
+            <div className="flex flex-wrap items-center justify-center gap-6">
               {stack.map((item, index) => (
                 <motion.div
                   key={item.name}
-                  className="flex flex-col items-center gap-3"
+                  className="flex flex-col items-center gap-2"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-                  whileHover={{ scale: 1.1, y: -4 }}
+                  whileHover={{ scale: 1.08, y: -3 }}
                 >
-                  <div className="card-rich w-24 h-24 rounded-3xl bg-white flex items-center justify-center p-5 shadow-lg border border-zinc-100 dark:border-transparent">
-                    {item.icon ? (
-                      <item.icon className="w-full h-full text-brand-600" />
-                    ) : (
-                      <img src={`https://cdn.simpleicons.org/${item.slug}`} alt={item.name} className="w-full h-full object-contain" />
-                    )}
+                  <div className="card-rich w-16 h-16 rounded-2xl bg-white flex items-center justify-center p-3.5 shadow-lg border border-zinc-100 dark:border-transparent">
+                    <img
+                      src={item.slug === 'microsoftexcel' ? `${import.meta.env.BASE_URL}images/excel-logo.svg` : `https://cdn.simpleicons.org/${item.slug}`}
+                      alt={item.name}
+                      className="w-full h-full object-contain"
+                    />
                   </div>
-                  <span className="font-rubik text-sm font-medium text-zinc-500 dark:text-zinc-400">{item.name}</span>
+                  <span className="font-rubik text-xs font-medium text-zinc-500 dark:text-zinc-400">{item.name}</span>
                 </motion.div>
               ))}
             </div>
