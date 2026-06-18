@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
 const AuthContext = createContext(null);
+const ADMIN_EMAIL = 'officialatrail@gmail.com';
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(null);
@@ -22,15 +23,36 @@ export function AuthProvider({ children }) {
 
   const login = async (email, password) => {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
-    return !error;
+    return error ? error.message : null;
+  };
+
+  const signUp = async (email, password) => {
+    const { error } = await supabase.auth.signUp({ email, password });
+    return error ? error.message : null;
+  };
+
+  const sendPasswordReset = async (email) => {
+    const redirectTo = `${window.location.origin}${import.meta.env.BASE_URL}reset-password`;
+    const { error } = await supabase.auth.resetPasswordForEmail(email, { redirectTo });
+    return error ? error.message : null;
+  };
+
+  const updatePassword = async (newPassword) => {
+    const { error } = await supabase.auth.updateUser({ password: newPassword });
+    return error ? error.message : null;
   };
 
   const logout = async () => {
     await supabase.auth.signOut();
   };
 
+  const isAuthenticated = !!session;
+  const isAdmin = session?.user?.email === ADMIN_EMAIL;
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated: !!session, loading, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated, isAdmin, loading, login, signUp, sendPasswordReset, updatePassword, logout }}
+    >
       {children}
     </AuthContext.Provider>
   );

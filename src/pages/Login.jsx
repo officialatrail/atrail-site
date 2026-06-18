@@ -5,6 +5,7 @@ import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import PasswordInput from '../components/PasswordInput';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -20,12 +21,12 @@ export default function Login() {
     e.preventDefault();
     setSubmitting(true);
     setError('');
-    const ok = await login(email, password);
+    const errorMessage = await login(email, password);
     setSubmitting(false);
-    if (ok) {
+    if (!errorMessage) {
       navigate(from, { replace: true });
     } else {
-      setError('Incorrect email or password.');
+      setError(errorMessage);
     }
   };
 
@@ -45,7 +46,7 @@ export default function Login() {
           </div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Sign in to Atrail</h1>
           <p className="font-rubik text-zinc-600 dark:text-zinc-400 mb-8">
-            Tools and prompts are members-only for now. Sign in to get access.
+            Tools and prompts are members-only. Sign in to get access.
           </p>
 
           <form onSubmit={onSubmit} className="space-y-4">
@@ -60,14 +61,13 @@ export default function Login() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Password</label>
-              <input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
-                autoComplete="current-password"
-              />
+              <div className="flex items-center justify-between mb-1.5">
+                <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300">Password</label>
+                <Link to="/forgot-password" className="text-xs font-semibold text-brand-600 hover:text-brand-700">
+                  Forgot password?
+                </Link>
+              </div>
+              <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
 
@@ -82,7 +82,13 @@ export default function Login() {
             </motion.button>
           </form>
 
-          <Link to="/" className="block text-center text-sm text-brand-600 hover:text-brand-700 mt-6">
+          <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 text-center mt-6">
+            Don't have an account?{' '}
+            <Link to="/signup" className="text-brand-600 hover:text-brand-700 font-semibold">
+              Sign up
+            </Link>
+          </p>
+          <Link to="/" className="block text-center text-sm text-brand-600 hover:text-brand-700 mt-4">
             Back to home
           </Link>
         </motion.div>

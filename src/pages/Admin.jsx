@@ -7,6 +7,7 @@ import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
 import ChartInserter from '../components/ChartInserter';
+import ImageUpload from '../components/ImageUpload';
 import {
   getArticles, saveArticles,
   getTools, saveTools,
@@ -163,6 +164,7 @@ function ToolsAdmin() {
             <textarea className={inputClass} rows={2} value={item.description} onChange={(e) => update(i, 'description', e.target.value)} />
           </Field>
           <Field label="Image URL">
+            <ImageUpload onUploaded={(url) => update(i, 'image', url)} />
             <input className={inputClass} value={item.image} onChange={(e) => update(i, 'image', e.target.value)} />
           </Field>
           <div className="grid grid-cols-2 gap-3">
@@ -306,6 +308,7 @@ function PillarsAdmin() {
                 </select>
               </Field>
               <Field label="Image URL (overrides icon)">
+                <ImageUpload onUploaded={(url) => update(i, 'image', url)} />
                 <input className={inputClass} value={item.image} onChange={(e) => update(i, 'image', e.target.value)} />
               </Field>
             </div>

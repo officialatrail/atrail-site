@@ -17,6 +17,9 @@ import ArticleDetail from './src/pages/ArticleDetail.jsx';
 import Videos from './src/pages/Videos.jsx';
 import About from './src/pages/About.jsx';
 import Login from './src/pages/Login.jsx';
+import SignUp from './src/pages/SignUp.jsx';
+import ForgotPassword from './src/pages/ForgotPassword.jsx';
+import ResetPassword from './src/pages/ResetPassword.jsx';
 import Admin from './src/pages/Admin.jsx';
 import NotFound from './src/pages/NotFound.jsx';
 
@@ -28,6 +31,9 @@ function AnimatedRoutes() {
         <Routes location={location}>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
           <Route
             path="/tools"
             element={<ProtectedRoute><Tools /></ProtectedRoute>}
@@ -38,7 +44,7 @@ function AnimatedRoutes() {
           />
           <Route
             path="/admin"
-            element={<ProtectedRoute><Admin /></ProtectedRoute>}
+            element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>}
           />
           <Route path="/articles" element={<Articles />} />
           <Route path="/articles/:slug" element={<ArticleDetail />} />
