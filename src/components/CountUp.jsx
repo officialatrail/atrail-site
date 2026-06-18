@@ -3,11 +3,14 @@ import { motion, useInView } from 'framer-motion';
 
 export default function CountUp({ value, suffix = '', duration = 1.6 }) {
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: '-80px' });
+  const isInView = useInView(ref, { once: false, margin: '-80px' });
   const [display, setDisplay] = useState(0);
 
   useEffect(() => {
-    if (!isInView) return;
+    if (!isInView) {
+      setDisplay(0);
+      return;
+    }
     let start = null;
     let frame;
 
