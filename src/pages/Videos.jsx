@@ -1,9 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getVideos } from '../lib/contentStore';
+
+function VideoCard({ video, index, onOpen }) {
+  const [preview, setPreview] = useState(false);
+  const timeoutRef = useRef(null);
+
+  const handleEnter = () => {
+    timeoutRef.current = setTimeout(() => setPreview(true), 250);
+  };
+  const handleLeave = () => {
+    clearTimeout(timeoutRef.current);
+    setPreview(false);
+  };
+
+  return (
+    <motion.button
+      onClick={() => onOpen(video.videoId)}
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+      className="card-rich group text-left bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800"
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+      whileHover={{ y: -6 }}
+    >
+      <div className="relative aspect-video bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
+        {preview ? (
+          <iframe
+            src={`https://www.youtube.com/embed/${video.videoId}?autoplay=1&mute=1&controls=0&loop=1&playlist=${video.videoId}&modestbranding=1&rel=0`}
+            title={video.title}
+            allow="autoplay; encrypted-media"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+          />
+        ) : (
+          <img
+            src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
+            alt={video.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        )}
+        <div className="absolute inset-0 flex items-center justify-center">
+          <Play className={`w-10 h-10 text-white/70 drop-shadow-lg transition-opacity duration-300 ${preview ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`} />
+        </div>
+      </div>
+      <div className="p-5">
+        <h3 className="font-bold text-zinc-900 dark:text-white mb-2">{video.title}</h3>
+        <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400">{video.description}</p>
+      </div>
+    </motion.button>
+  );
+}
 
 export default function Videos() {
   const [active, setActive] = useState(null);
@@ -31,31 +82,7 @@ export default function Videos() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video, index) => (
-              <motion.button
-                key={video.videoId + index}
-                onClick={() => setActive(video.videoId)}
-                className="card-rich group text-left bg-white dark:bg-zinc-900 rounded-2xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800"
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -6 }}
-              >
-                <div className="relative aspect-video bg-zinc-200 dark:bg-zinc-800 overflow-hidden">
-                  <img
-                    src={`https://img.youtube.com/vi/${video.videoId}/hqdefault.jpg`}
-                    alt={video.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                  />
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <Play className="w-10 h-10 text-white/0 group-hover:text-white/70 transition-colors duration-300 drop-shadow-lg" />
-                  </div>
-                </div>
-                <div className="p-5">
-                  <h3 className="font-bold text-zinc-900 dark:text-white mb-2">{video.title}</h3>
-                  <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400">{video.description}</p>
-                </div>
-              </motion.button>
+              <VideoCard key={video.videoId + index} video={video} index={index} onOpen={setActive} />
             ))}
           </div>
         </div>

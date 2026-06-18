@@ -116,7 +116,7 @@ const Hero = () => {
                   transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
                   whileHover={{ scale: 1.1, y: -4 }}
                 >
-                  <div className="card-rich w-24 h-24 rounded-3xl bg-white flex items-center justify-center p-5 shadow-lg border border-zinc-100 dark:border-transparent">
+                  <div className="card-rich w-24 h-24 sm:w-28 sm:h-28 md:w-32 md:h-32 rounded-3xl bg-white flex items-center justify-center p-5 sm:p-6 shadow-lg border border-zinc-100 dark:border-transparent">
                     <img src={item.img} alt={item.name} className="w-full h-full object-contain" />
                   </div>
                   <span className="font-rubik text-sm font-medium text-zinc-500 dark:text-zinc-400">{item.name}</span>

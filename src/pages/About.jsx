@@ -24,7 +24,7 @@ export default function About() {
               <span className="text-brand-600 dark:text-brand-400"> Atrail</span>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Built by Michael Awojide, a community hub for finance and accounting professionals
+              Built by Michael, a community hub for finance and accounting professionals
               who want to automate their work with AI and no-code tools.
             </p>
           </motion.div>
