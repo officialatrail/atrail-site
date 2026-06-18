@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Plus, LogOut, Trash2 } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -15,8 +15,8 @@ import {
   getVideos, saveVideos,
   getAbout, saveAbout,
   getComingSoon, saveComingSoon,
-  getWaitlist,
-  getExclusiveRequests, getApprovedEmails, approveEmail, revokeEmail,
+  fetchWaitlist,
+  fetchExclusiveRequests, fetchApprovedEmails, approveEmail, revokeEmail,
   getStats, saveStats,
   slugify,
 } from '../lib/contentStore';
@@ -37,6 +37,15 @@ const cardClass = "bg-white dark:bg-zinc-900 rounded-2xl border border-slate-100
 const saveBtnClass = "inline-flex items-center gap-1.5 text-sm font-semibold text-brand-600 hover:text-brand-700";
 const addBtnClass = "mb-6 inline-flex items-center gap-2 bg-brand-600 text-white px-4 py-2 rounded-full text-sm font-semibold hover:bg-brand-700";
 
+async function persist(saveFn, data, successMsg) {
+  try {
+    await saveFn(data);
+    toast.success(successMsg);
+  } catch {
+    toast.error('Could not save - check your connection and try again.');
+  }
+}
+
 function ArticlesAdmin() {
   const [items, setItems] = useState(getArticles());
 
@@ -46,15 +55,12 @@ function ArticlesAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    saveArticles(items);
-    toast.success('Articles saved');
-  };
+  const save = () => persist(saveArticles, items, 'Articles saved');
 
   const remove = (index) => {
     const next = items.filter((_, i) => i !== index);
     setItems(next);
-    saveArticles(next);
+    persist(saveArticles, next, 'Article removed');
   };
 
   const addNew = () => {
@@ -72,7 +78,7 @@ function ArticlesAdmin() {
       ...items,
     ];
     setItems(next);
-    saveArticles(next);
+    persist(saveArticles, next, 'Article added');
   };
 
   return (
@@ -139,10 +145,7 @@ function ToolsAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    saveTools(items);
-    toast.success('Tools saved');
-  };
+  const save = () => persist(saveTools, items, 'Tools saved');
 
   return (
     <div className="space-y-4">
@@ -196,15 +199,12 @@ function PromptsAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    savePrompts(items);
-    toast.success('Prompts saved');
-  };
+  const save = () => persist(savePrompts, items, 'Prompts saved');
 
   const remove = (index) => {
     const next = items.filter((_, i) => i !== index);
     setItems(next);
-    savePrompts(next);
+    persist(savePrompts, next, 'Prompt removed');
   };
 
   const addNew = () => {
@@ -213,7 +213,7 @@ function PromptsAdmin() {
       ...items,
     ];
     setItems(next);
-    savePrompts(next);
+    persist(savePrompts, next, 'Prompt added');
   };
 
   return (
@@ -266,21 +266,18 @@ function PillarsAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    savePillars(items);
-    toast.success('Pillars saved');
-  };
+  const save = () => persist(savePillars, items, 'Pillars saved');
 
   const remove = (index) => {
     const next = items.filter((_, i) => i !== index);
     setItems(next);
-    savePillars(next);
+    persist(savePillars, next, 'Pillar removed');
   };
 
   const addNew = () => {
     const next = [...items, { icon: iconNames[0], image: '', title: 'New Pillar', description: 'Short description.' }];
     setItems(next);
-    savePillars(next);
+    persist(savePillars, next, 'Pillar added');
   };
 
   return (
@@ -331,21 +328,18 @@ function VideosAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    saveVideos(items);
-    toast.success('Videos saved');
-  };
+  const save = () => persist(saveVideos, items, 'Videos saved');
 
   const remove = (index) => {
     const next = items.filter((_, i) => i !== index);
     setItems(next);
-    saveVideos(next);
+    persist(saveVideos, next, 'Video removed');
   };
 
   const addNew = () => {
     const next = [...items, { videoId: '', title: 'New Video', description: 'Short description.' }];
     setItems(next);
-    saveVideos(next);
+    persist(saveVideos, next, 'Video added');
   };
 
   return (
@@ -395,10 +389,7 @@ function AboutAdmin() {
     setAbout({ ...about, focusAreas: next });
   };
 
-  const save = () => {
-    saveAbout(about);
-    toast.success('About page saved');
-  };
+  const save = () => persist(saveAbout, about, 'About page saved');
 
   return (
     <div className={cardClass}>
@@ -428,10 +419,7 @@ function StatsAdmin() {
     setItems(next);
   };
 
-  const save = () => {
-    saveStats(items);
-    toast.success('Stats saved');
-  };
+  const save = () => persist(saveStats, items, 'Stats saved');
 
   return (
     <div className={cardClass}>
@@ -471,10 +459,7 @@ function ComingSoonAdmin() {
     setData({ ...data, features: next });
   };
 
-  const save = () => {
-    saveComingSoon(data);
-    toast.success('Coming Soon section saved');
-  };
+  const save = () => persist(saveComingSoon, data, 'Coming Soon section saved');
 
   return (
     <div className={cardClass}>
@@ -500,12 +485,20 @@ function ComingSoonAdmin() {
 }
 
 function WaitlistAdmin() {
-  const entries = getWaitlist();
+  const [entries, setEntries] = useState(null);
+
+  useEffect(() => {
+    fetchWaitlist().then(setEntries).catch(() => setEntries([]));
+  }, []);
+
+  if (entries === null) {
+    return <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">Loading...</p>;
+  }
+
   return (
     <div className={cardClass}>
       <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-        {entries.length} {entries.length === 1 ? 'person' : 'people'} interested. Note: this only shows
-        people who joined from this browser, since there's no shared backend yet.
+        {entries.length} {entries.length === 1 ? 'person' : 'people'} interested.
       </p>
       {entries.length === 0 ? (
         <p className="text-zinc-400 dark:text-zinc-500 text-sm">No signups yet.</p>
@@ -514,7 +507,7 @@ function WaitlistAdmin() {
           {entries.map((e, i) => (
             <li key={i} className="py-2.5 flex items-center justify-between text-sm">
               <span className="text-zinc-700 dark:text-zinc-300">{e.email}</span>
-              <span className="text-zinc-400 dark:text-zinc-500">{new Date(e.date).toLocaleDateString()}</span>
+              <span className="text-zinc-400 dark:text-zinc-500">{new Date(e.created_at).toLocaleDateString()}</span>
             </li>
           ))}
         </ul>
@@ -524,26 +517,43 @@ function WaitlistAdmin() {
 }
 
 function ExclusiveAdmin() {
-  const [requests, setRequests] = useState(getExclusiveRequests());
-  const [approved, setApproved] = useState(getApprovedEmails());
+  const [requests, setRequests] = useState(null);
+  const [approved, setApproved] = useState([]);
 
-  const approve = (email) => {
-    approveEmail(email);
-    setApproved(getApprovedEmails());
-    toast.success(`${email} can now view exclusive prompts`);
+  const reload = () => {
+    fetchExclusiveRequests().then(setRequests).catch(() => setRequests([]));
+    fetchApprovedEmails().then(setApproved).catch(() => setApproved([]));
   };
 
-  const revoke = (email) => {
-    revokeEmail(email);
-    setApproved(getApprovedEmails());
+  useEffect(() => { reload(); }, []);
+
+  const approve = async (email) => {
+    try {
+      await approveEmail(email);
+      toast.success(`${email} can now view exclusive prompts`);
+      reload();
+    } catch {
+      toast.error('Could not approve - try again.');
+    }
   };
+
+  const revoke = async (email) => {
+    try {
+      await revokeEmail(email);
+      reload();
+    } catch {
+      toast.error('Could not revoke - try again.');
+    }
+  };
+
+  if (requests === null) {
+    return <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">Loading...</p>;
+  }
 
   return (
     <div className={cardClass}>
       <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-        People who requested access to exclusive prompts. Approve an email to unlock exclusive
-        content for them. Note: this only works on the same browser, since there's no shared
-        backend yet.
+        People who requested access to exclusive prompts. Approve an email to unlock exclusive content for them.
       </p>
       {requests.length === 0 ? (
         <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">No requests yet.</p>
@@ -555,7 +565,7 @@ function ExclusiveAdmin() {
               <li key={i} className="py-2.5 flex items-center justify-between text-sm">
                 <div>
                   <span className="font-rubik text-zinc-700 dark:text-zinc-300">{r.email}</span>
-                  <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(r.date).toLocaleDateString()}</span>
+                  <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(r.created_at).toLocaleDateString()}</span>
                 </div>
                 {isApproved ? (
                   <button onClick={() => revoke(r.email)} className="font-rubik text-xs font-semibold text-red-500 hover:text-red-600">

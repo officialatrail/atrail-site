@@ -23,12 +23,16 @@ export default function Tools() {
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
 
-  const handleJoin = (e) => {
+  const handleJoin = async (e) => {
     e.preventDefault();
     if (!email) return;
-    joinWaitlist(email);
-    setJoined(true);
-    setEmail('');
+    try {
+      await joinWaitlist(email);
+      setJoined(true);
+      setEmail('');
+    } catch {
+      // keep the form visible so they can retry
+    }
   };
 
   return (

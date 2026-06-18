@@ -8,6 +8,7 @@
       "dependencies": {
             "@hookform/resolvers": "^5.2.1",
             "@radix-ui/themes": "^3.2.1",
+            "@supabase/supabase-js": "^2.108.2",
             "@vitejs/plugin-react": "^4.7.0",
             "autoprefixer": "^10.4.19",
             "date-fns": "^3.6.0",

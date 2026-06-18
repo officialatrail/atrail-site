@@ -7,20 +7,25 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 
 export default function Login() {
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [submitting, setSubmitting] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
-  const onSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    if (login(username, password)) {
+    setSubmitting(true);
+    setError('');
+    const ok = await login(email, password);
+    setSubmitting(false);
+    if (ok) {
       navigate(from, { replace: true });
     } else {
-      setError('Incorrect username or password.');
+      setError('Incorrect email or password.');
     }
   };
 
@@ -45,11 +50,11 @@ export default function Login() {
 
           <form onSubmit={onSubmit} className="space-y-4">
             <div>
-              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Username</label>
+              <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Email</label>
               <input
-                type="text"
-                value={username}
-                onChange={(e) => setUsername(e.target.value)}
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                 autoComplete="username"
               />
@@ -68,18 +73,16 @@ export default function Login() {
 
             <motion.button
               type="submit"
-              className="w-full bg-brand-600 text-white py-3.5 rounded-xl font-semibold hover:bg-brand-700 transition-all duration-200 flex items-center justify-center gap-2"
+              disabled={submitting}
+              className="w-full bg-brand-600 text-white py-3.5 rounded-xl font-semibold hover:bg-brand-700 transition-all duration-200 flex items-center justify-center gap-2 disabled:opacity-60"
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
             >
-              Sign In <ArrowRight size={16} />
+              {submitting ? 'Signing in...' : 'Sign In'} <ArrowRight size={16} />
             </motion.button>
           </form>
 
-          <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-6 text-center">
-            Use <span className="font-mono">admin</span> / <span className="font-mono">admin</span> for now.
-          </p>
-          <Link to="/" className="block text-center text-sm text-brand-600 hover:text-brand-700 mt-4">
+          <Link to="/" className="block text-center text-sm text-brand-600 hover:text-brand-700 mt-6">
             Back to home
           </Link>
         </motion.div>

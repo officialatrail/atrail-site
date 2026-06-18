@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Copy, Check, CheckCircle } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -10,9 +10,13 @@ import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail } fro
 export default function Prompts() {
   const [copiedIndex, setCopiedIndex] = useState(null);
   const prompts = getPrompts();
-  const [unlocked, setUnlocked] = useState(() => isMyEmailApproved());
+  const [unlocked, setUnlocked] = useState(false);
   const [requested, setRequested] = useState(() => !!getMyEmail());
   const [email, setEmail] = useState('');
+
+  useEffect(() => {
+    isMyEmailApproved().then(setUnlocked);
+  }, []);
 
   const handleCopy = async (text, index) => {
     await navigator.clipboard.writeText(text);
@@ -21,12 +25,16 @@ export default function Prompts() {
     setTimeout(() => setCopiedIndex(null), 2000);
   };
 
-  const handleRequest = (e) => {
+  const handleRequest = async (e) => {
     e.preventDefault();
     if (!email) return;
-    requestExclusiveAccess(email);
-    setRequested(true);
-    toast.success("Request sent. You'll get access once approved.");
+    try {
+      await requestExclusiveAccess(email);
+      setRequested(true);
+      toast.success("Request sent. You'll get access once approved.");
+    } catch {
+      toast.error('Could not send request - try again.');
+    }
   };
 
   return (

@@ -7,12 +7,16 @@ export default function LikeButton({ itemKey, className = '' }) {
   const [liked, setLiked] = useState(() => isLikedByMe(itemKey));
   const [count, setCount] = useState(() => getLikeCount(itemKey));
 
-  const handleClick = (e) => {
+  const handleClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-    const result = toggleLike(itemKey);
-    setLiked(result.liked);
-    setCount(result.count);
+    try {
+      const result = await toggleLike(itemKey);
+      setLiked(result.liked);
+      setCount(result.count);
+    } catch {
+      // ignore - counts stay as they were
+    }
   };
 
   return (

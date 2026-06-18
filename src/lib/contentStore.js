@@ -3,6 +3,7 @@ import { tools as defaultTools, categoryColors } from '../data/tools';
 import { prompts as defaultPrompts } from '../data/prompts';
 import { videos as defaultVideos } from '../data/videos';
 import { pillars as defaultPillars } from '../data/pillars';
+import { supabase } from './supabaseClient';
 
 export { categoryColors };
 
@@ -45,17 +46,13 @@ const KEYS = {
   about: 'atrail_about_v1',
   pillars: 'atrail_pillars_v1',
   comingSoon: 'atrail_coming_soon_v1',
-  waitlist: 'atrail_waitlist_v1',
-  likes: 'atrail_likes_v1',
-  likedByMe: 'atrail_liked_by_me_v1',
   bannerDismissed: 'atrail_banner_dismissed_v1',
-  exclusiveRequests: 'atrail_exclusive_requests_v1',
-  approvedEmails: 'atrail_approved_emails_v1',
+  likedByMe: 'atrail_liked_by_me_v1',
   myEmail: 'atrail_my_email_v1',
   stats: 'atrail_stats_v1',
 };
 
-function load(key, fallback) {
+function loadLocal(key, fallback) {
   try {
     const raw = localStorage.getItem(key);
     if (raw) return JSON.parse(raw);
@@ -65,101 +62,150 @@ function load(key, fallback) {
   return fallback;
 }
 
-function save(key, data) {
+function saveLocal(key, data) {
   localStorage.setItem(key, JSON.stringify(data));
 }
 
-export const getArticles = () => load(KEYS.articles, defaultArticles);
-export const saveArticles = (data) => save(KEYS.articles, data);
-
-export const getTools = () => load(KEYS.tools, defaultTools);
-export const saveTools = (data) => save(KEYS.tools, data);
-
-export const getPrompts = () => load(KEYS.prompts, defaultPrompts);
-export const savePrompts = (data) => save(KEYS.prompts, data);
-
-export const getVideos = () => load(KEYS.videos, defaultVideos);
-export const saveVideos = (data) => save(KEYS.videos, data);
-
-export const getAbout = () => load(KEYS.about, defaultAbout);
-export const saveAbout = (data) => save(KEYS.about, data);
-
-export const getPillars = () => load(KEYS.pillars, defaultPillars);
-export const savePillars = (data) => save(KEYS.pillars, data);
-
-export const getComingSoon = () => load(KEYS.comingSoon, defaultComingSoon);
-export const saveComingSoon = (data) => save(KEYS.comingSoon, data);
-
-export const getWaitlist = () => load(KEYS.waitlist, []);
-export const joinWaitlist = (email) => {
-  const list = getWaitlist();
-  list.push({ email, date: new Date().toISOString() });
-  save(KEYS.waitlist, list);
+// In-memory cache, hydrated from Supabase once at app boot (see hydrateContentStore
+// in index.jsx, called before the first render). get* functions read from here so
+// every page/component can keep calling them synchronously, same as before.
+const cache = {
+  articles: loadLocal(KEYS.articles, defaultArticles),
+  tools: loadLocal(KEYS.tools, defaultTools),
+  prompts: loadLocal(KEYS.prompts, defaultPrompts),
+  videos: loadLocal(KEYS.videos, defaultVideos),
+  about: loadLocal(KEYS.about, defaultAbout),
+  pillars: loadLocal(KEYS.pillars, defaultPillars),
+  comingSoon: loadLocal(KEYS.comingSoon, defaultComingSoon),
+  stats: loadLocal(KEYS.stats, defaultStats),
+  likes: {},
 };
 
+export async function hydrateContentStore() {
+  try {
+    const { data, error } = await supabase.from('site_content').select('key, value');
+    if (!error && data) {
+      for (const row of data) {
+        if (row.key in cache) cache[row.key] = row.value;
+      }
+    }
+  } catch {
+    /* offline or unreachable - keep local/default cache */
+  }
+
+  try {
+    const { data, error } = await supabase.from('likes').select('item_key, count');
+    if (!error && data) {
+      cache.likes = Object.fromEntries(data.map((r) => [r.item_key, r.count]));
+    }
+  } catch {
+    /* keep empty likes cache */
+  }
+}
+
+function makeContentPair(cacheKey, storageKey) {
+  return [
+    () => cache[cacheKey],
+    async (value) => {
+      cache[cacheKey] = value;
+      saveLocal(storageKey, value);
+      const { error } = await supabase.from('site_content').upsert({ key: cacheKey, value });
+      if (error) throw error;
+    },
+  ];
+}
+
+export const [getArticles, saveArticles] = makeContentPair('articles', KEYS.articles);
+export const [getTools, saveTools] = makeContentPair('tools', KEYS.tools);
+export const [getPrompts, savePrompts] = makeContentPair('prompts', KEYS.prompts);
+export const [getVideos, saveVideos] = makeContentPair('videos', KEYS.videos);
+export const [getAbout, saveAbout] = makeContentPair('about', KEYS.about);
+export const [getPillars, savePillars] = makeContentPair('pillars', KEYS.pillars);
+export const [getComingSoon, saveComingSoon] = makeContentPair('comingSoon', KEYS.comingSoon);
+export const [getStats, saveStats] = makeContentPair('stats', KEYS.stats);
+
+// Waitlist / exclusive access: writes are public (anyone can submit their email),
+// reads are admin-only and fetched live from Supabase inside the Admin page.
+export async function joinWaitlist(email) {
+  const { error } = await supabase.from('waitlist').insert({ email });
+  if (error) throw error;
+}
+
+export async function fetchWaitlist() {
+  const { data, error } = await supabase
+    .from('waitlist')
+    .select('email, created_at')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function requestExclusiveAccess(email) {
+  setMyEmail(email);
+  const { error } = await supabase
+    .from('exclusive_requests')
+    .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
+  if (error) throw error;
+}
+
+export async function fetchExclusiveRequests() {
+  const { data, error } = await supabase
+    .from('exclusive_requests')
+    .select('email, created_at')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchApprovedEmails() {
+  const { data, error } = await supabase.from('approved_emails').select('email');
+  if (error) throw error;
+  return data.map((r) => r.email);
+}
+
+export async function approveEmail(email) {
+  const { error } = await supabase.from('approved_emails').insert({ email });
+  if (error) throw error;
+}
+
+export async function revokeEmail(email) {
+  const { error } = await supabase.from('approved_emails').delete().eq('email', email);
+  if (error) throw error;
+}
+
+export async function isMyEmailApproved() {
+  const mine = getMyEmail();
+  if (!mine) return false;
+  const { data, error } = await supabase.rpc('check_email_approved', { check_email: mine });
+  if (error) return false;
+  return !!data;
+}
+
 export const isLikedByMe = (itemKey) => {
-  const liked = load(KEYS.likedByMe, []);
+  const liked = loadLocal(KEYS.likedByMe, []);
   return liked.includes(itemKey);
 };
 
-export const getLikeCount = (itemKey) => {
-  const likes = load(KEYS.likes, {});
-  return likes[itemKey] || 0;
-};
+export const getLikeCount = (itemKey) => cache.likes[itemKey] || 0;
 
-export const toggleLike = (itemKey) => {
-  const likes = load(KEYS.likes, {});
-  const liked = load(KEYS.likedByMe, []);
+export async function toggleLike(itemKey) {
+  const liked = loadLocal(KEYS.likedByMe, []);
   const alreadyLiked = liked.includes(itemKey);
-  const current = likes[itemKey] || 0;
+  const delta = alreadyLiked ? -1 : 1;
 
-  if (alreadyLiked) {
-    likes[itemKey] = Math.max(0, current - 1);
-    save(KEYS.likes, likes);
-    save(KEYS.likedByMe, liked.filter((k) => k !== itemKey));
-    return { liked: false, count: likes[itemKey] };
-  }
+  const { data, error } = await supabase.rpc('adjust_like', { p_item_key: itemKey, p_delta: delta });
+  if (error) throw error;
 
-  likes[itemKey] = current + 1;
-  save(KEYS.likes, likes);
-  save(KEYS.likedByMe, [...liked, itemKey]);
-  return { liked: true, count: likes[itemKey] };
-};
+  cache.likes[itemKey] = data;
+  saveLocal(KEYS.likedByMe, alreadyLiked ? liked.filter((k) => k !== itemKey) : [...liked, itemKey]);
+  return { liked: !alreadyLiked, count: data };
+}
 
-export const isBannerDismissed = () => load(KEYS.bannerDismissed, false);
-export const dismissBanner = () => save(KEYS.bannerDismissed, true);
+export const isBannerDismissed = () => loadLocal(KEYS.bannerDismissed, false);
+export const dismissBanner = () => saveLocal(KEYS.bannerDismissed, true);
 
-export const getMyEmail = () => load(KEYS.myEmail, '');
-export const setMyEmail = (email) => save(KEYS.myEmail, email);
-
-export const getExclusiveRequests = () => load(KEYS.exclusiveRequests, []);
-export const requestExclusiveAccess = (email) => {
-  setMyEmail(email);
-  const list = getExclusiveRequests();
-  if (!list.some((r) => r.email === email)) {
-    list.push({ email, date: new Date().toISOString() });
-    save(KEYS.exclusiveRequests, list);
-  }
-};
-
-export const getApprovedEmails = () => load(KEYS.approvedEmails, []);
-export const approveEmail = (email) => {
-  const list = getApprovedEmails();
-  if (!list.includes(email)) {
-    save(KEYS.approvedEmails, [...list, email]);
-  }
-};
-export const revokeEmail = (email) => {
-  save(KEYS.approvedEmails, getApprovedEmails().filter((e) => e !== email));
-};
-
-export const isMyEmailApproved = () => {
-  const mine = getMyEmail();
-  return mine && getApprovedEmails().includes(mine);
-};
-
-export const getStats = () => load(KEYS.stats, defaultStats);
-export const saveStats = (data) => save(KEYS.stats, data);
+export const getMyEmail = () => loadLocal(KEYS.myEmail, '');
+export const setMyEmail = (email) => saveLocal(KEYS.myEmail, email);
 
 export function slugify(title) {
   return title
