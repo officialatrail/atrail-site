@@ -1,8 +1,8 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-export default defineConfig({
-  base: '/atrail-site/',
+export default defineConfig(({ command }) => ({
+  base: command === 'build' ? '/atrail-site/' : '/',
   plugins: [react()],
   server: {
     allowedHosts: true,
@@ -40,4 +40,4 @@ export default defineConfig({
       },
     },
   },
-});
+}));
