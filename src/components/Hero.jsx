@@ -9,12 +9,12 @@ import ElegantShapes from './ElegantShapes';
 import MagnetizeWrap from './MagnetizeWrap';
 
 const stack = [
-  { name: 'n8n', slug: 'n8n' },
-  { name: 'Zapier', slug: 'zapier' },
-  { name: 'Claude', slug: 'anthropic' },
-  { name: 'Excel', slug: 'microsoftexcel' },
-  { name: 'Google Sheets', slug: 'googlesheets' },
-  { name: 'Airtable', slug: 'airtable' },
+  { name: 'n8n', img: 'https://cdn.simpleicons.org/n8n' },
+  { name: 'Zapier', img: 'https://cdn.simpleicons.org/zapier' },
+  { name: 'Claude', img: 'https://cdn.simpleicons.org/anthropic' },
+  { name: 'Excel', img: `${import.meta.env.BASE_URL}images/excel-logo.svg` },
+  { name: 'Google Sheets', img: 'https://cdn.simpleicons.org/googlesheets' },
+  { name: 'Airtable', img: 'https://cdn.simpleicons.org/airtable' },
 ];
 
 const Hero = () => {
@@ -54,7 +54,7 @@ const Hero = () => {
           >
             Automate Your
             <br />
-            <span className="text-shimmer">
+            <span className="text-brand-600 dark:text-brand-400">
               Finance Workflow
             </span>
           </motion.h1>
@@ -105,25 +105,21 @@ const Hero = () => {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.8, delay: 0.8 }}
           >
-            <p className="font-rubik text-sm text-zinc-500 mb-8">Some of the tools we automate with</p>
-            <div className="flex flex-wrap items-center justify-center gap-6">
+            <p className="font-rubik text-sm text-zinc-500 mb-10">Some of the tools we automate with</p>
+            <div className="flex flex-wrap items-center justify-center gap-10">
               {stack.map((item, index) => (
                 <motion.div
                   key={item.name}
-                  className="flex flex-col items-center gap-2"
+                  className="flex flex-col items-center gap-3"
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ duration: 0.5, delay: 1 + index * 0.1 }}
-                  whileHover={{ scale: 1.08, y: -3 }}
+                  whileHover={{ scale: 1.1, y: -4 }}
                 >
-                  <div className="card-rich w-16 h-16 rounded-2xl bg-white flex items-center justify-center p-3.5 shadow-lg border border-zinc-100 dark:border-transparent">
-                    <img
-                      src={item.slug === 'microsoftexcel' ? `${import.meta.env.BASE_URL}images/excel-logo.svg` : `https://cdn.simpleicons.org/${item.slug}`}
-                      alt={item.name}
-                      className="w-full h-full object-contain"
-                    />
+                  <div className="card-rich w-24 h-24 rounded-3xl bg-white flex items-center justify-center p-5 shadow-lg border border-zinc-100 dark:border-transparent">
+                    <img src={item.img} alt={item.name} className="w-full h-full object-contain" />
                   </div>
-                  <span className="font-rubik text-xs font-medium text-zinc-500 dark:text-zinc-400">{item.name}</span>
+                  <span className="font-rubik text-sm font-medium text-zinc-500 dark:text-zinc-400">{item.name}</span>
                 </motion.div>
               ))}
             </div>

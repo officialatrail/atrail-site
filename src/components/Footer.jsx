@@ -18,9 +18,9 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@OfficialAtrail' },
-    { name: 'LinkedIn', icon: Linkedin, href: 'https://linkedin.com' },
-    { name: 'Email', icon: Mail, href: 'mailto:hello@officialatrail.online' },
+    { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@OfficialAtrail', hoverClass: 'hover:bg-[#FF0000]' },
+    { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/atrail/', hoverClass: 'hover:bg-[#0A66C2]' },
+    { name: 'Email', icon: Mail, href: 'mailto:hello@officialatrail.online', hoverClass: 'hover:bg-brand-600' },
   ];
 
   return (
@@ -50,7 +50,7 @@ const Footer = () => {
                     href={social.href}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center hover:bg-brand-600 transition-all duration-200"
+                    className={`w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center transition-all duration-200 ${social.hoverClass}`}
                     whileHover={{ scale: 1.1, y: -2 }}
                     whileTap={{ scale: 0.95 }}
                     aria-label={social.name}
