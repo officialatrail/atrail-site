@@ -36,7 +36,7 @@ const Footer = () => {
               transition={{ duration: 0.8 }}
             >
               <div className="flex items-center gap-2 mb-4">
-                <img src="/images/logo-white.png" alt="Atrail" className="w-8 h-8 object-contain" />
+                <img src={`${import.meta.env.BASE_URL}images/logo-white.png`} alt="Atrail" className="w-8 h-8 object-contain" />
                 <h2 className="font-rubik text-3xl font-bold text-white">Atrail</h2>
               </div>
               <p className="font-rubik text-zinc-400 mb-6 leading-relaxed max-w-sm">

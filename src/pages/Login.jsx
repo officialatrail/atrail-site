@@ -35,8 +35,8 @@ export default function Login() {
           transition={{ duration: 0.6 }}
         >
           <div className="w-14 h-14 rounded-2xl bg-brand-100 dark:bg-brand-900/40 flex items-center justify-center mb-6">
-            <img src="/images/logo-green.png" alt="Atrail" className="w-8 h-8 object-contain dark:hidden" />
-            <img src="/images/logo-white.png" alt="Atrail" className="w-8 h-8 object-contain hidden dark:block" />
+            <img src={`${import.meta.env.BASE_URL}images/logo-green.png`} alt="Atrail" className="w-8 h-8 object-contain dark:hidden" />
+            <img src={`${import.meta.env.BASE_URL}images/logo-white.png`} alt="Atrail" className="w-8 h-8 object-contain hidden dark:block" />
           </div>
           <h1 className="text-2xl font-bold text-zinc-900 dark:text-white mb-2">Sign in to Atrail</h1>
           <p className="font-rubik text-zinc-600 dark:text-zinc-400 mb-8">

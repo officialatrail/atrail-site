@@ -55,7 +55,7 @@ export default function App() {
   return (
     <ThemeProvider>
       <AuthProvider>
-        <Router>
+        <Router basename={import.meta.env.BASE_URL}>
           <ScrollProgress />
           <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
             <AnimatedRoutes />

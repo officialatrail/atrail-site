@@ -81,12 +81,12 @@ const Header = () => {
           <motion.div whileHover={{ scale: 1.05 }} transition={{ type: 'spring', stiffness: 400, damping: 10 }}>
             <Link to="/" className="flex items-center gap-2">
               <img
-                src="/images/logo-green.png"
+                src={`${import.meta.env.BASE_URL}images/logo-green.png`}
                 alt="Atrail"
                 className="w-8 h-8 object-contain dark:hidden"
               />
               <img
-                src="/images/logo-white.png"
+                src={`${import.meta.env.BASE_URL}images/logo-white.png`}
                 alt="Atrail"
                 className="w-8 h-8 object-contain hidden dark:block"
               />
