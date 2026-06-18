@@ -11,9 +11,9 @@ import MagnetizeWrap from './MagnetizeWrap';
 const stack = [
   { name: 'n8n', img: 'https://cdn.simpleicons.org/n8n' },
   { name: 'Zapier', img: 'https://cdn.simpleicons.org/zapier' },
-  { name: 'Claude', img: 'https://cdn.simpleicons.org/anthropic' },
-  { name: 'Excel', img: `${import.meta.env.BASE_URL}images/excel-logo.svg` },
-  { name: 'Google Sheets', img: 'https://cdn.simpleicons.org/googlesheets' },
+  { name: 'Claude', img: 'https://cdn.simpleicons.org/claude' },
+  { name: 'Excel', img: `${import.meta.env.BASE_URL}images/excel-logo-new.svg` },
+  { name: 'Google Sheets', img: `${import.meta.env.BASE_URL}images/gsheets-logo.svg` },
   { name: 'Airtable', img: 'https://cdn.simpleicons.org/airtable' },
 ];
 

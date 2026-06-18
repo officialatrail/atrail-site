@@ -2,13 +2,11 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
-import { categoryColors } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
 
 export default function ToolCard({ tool, locked, onPlayVideo }) {
   const platformInfo = tool.platform ? platforms[tool.platform] : null;
-  const PlatformIcon = platformInfo?.icon;
 
   const inner = (
     <>
@@ -23,30 +21,16 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
           </div>
         )}
       </div>
-      <div className="flex items-center gap-2 mb-3">
-        <span
-          className="inline-block text-xs font-bold px-2.5 py-1 rounded-full"
-          style={categoryColors[tool.category]}
-        >
-          {tool.category}
-        </span>
-        {platformInfo && (
+      {platformInfo && (
+        <div className="flex items-center gap-2 mb-3">
           <span
             className="inline-flex items-center justify-center w-6 h-6 rounded-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 p-1"
             title={tool.platform}
           >
-            {PlatformIcon ? (
-              <PlatformIcon className="w-full h-full text-brand-600" />
-            ) : (
-              <img
-                src={`https://cdn.simpleicons.org/${platformInfo.slug}`}
-                alt={tool.platform}
-                className="w-full h-full object-contain"
-              />
-            )}
+            <img src={platformInfo.logo} alt={tool.platform} className="w-full h-full object-contain" />
           </span>
-        )}
-      </div>
+        </div>
+      )}
       <h3 className="text-lg font-bold text-zinc-900 dark:text-white mb-2">{tool.name}</h3>
       {locked ? (
         <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed filter blur-[3px] select-none pointer-events-none">

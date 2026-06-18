@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { getPillars } from '../lib/contentStore';
 import { iconRegistry } from '../lib/iconRegistry';
+import RotatingImage from './RotatingImage';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -53,7 +54,9 @@ const Features = () => {
                 transition={{ type: "spring", stiffness: 300, damping: 22 }}
               >
                 <div className="relative aspect-[16/9] overflow-hidden">
-                  {pillar.image ? (
+                  {pillar.images ? (
+                    <RotatingImage images={pillar.images} alt={pillar.title} className="w-full h-full" />
+                  ) : pillar.image ? (
                     <img
                       src={pillar.image}
                       alt={pillar.title}

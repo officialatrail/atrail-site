@@ -44,9 +44,6 @@ export default function Articles() {
                   className="card-rich group block bg-white dark:bg-zinc-900 rounded-2xl p-8 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800 hover:border-slate-200 dark:hover:border-zinc-700"
                 >
                   <div className="flex items-center gap-3 mb-3 text-sm text-zinc-500 dark:text-zinc-500">
-                    <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300">
-                      {article.category}
-                    </span>
                     <span>{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                     <span>·</span>
                     <span>{article.readTime}</span>

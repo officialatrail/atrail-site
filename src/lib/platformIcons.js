@@ -1,14 +1,10 @@
-import { FileSpreadsheet, Code2 } from 'lucide-react';
-
 // Platform logos shown on tool cards and used for the platform filter on /tools.
-// `slug` resolves to a Simple Icons logo; `icon` is a lucide-react fallback
-// for platforms Simple Icons doesn't host (e.g. Microsoft Office products).
+// Real brand logos only — local files for ones without a public CDN, simpleicons CDN otherwise.
 export const platforms = {
-  'Google Sheets': { slug: 'googlesheets' },
-  'Excel': { icon: FileSpreadsheet },
-  'VBA': { icon: Code2 },
-  'n8n': { slug: 'n8n' },
-  'Zapier': { slug: 'zapier' },
+  'Google Sheets': { logo: `${import.meta.env.BASE_URL}images/gsheets-logo.svg` },
+  'Excel': { logo: `${import.meta.env.BASE_URL}images/excel-logo-new.svg` },
+  'n8n': { logo: 'https://cdn.simpleicons.org/n8n' },
+  'Zapier': { logo: 'https://cdn.simpleicons.org/zapier' },
 };
 
 export const platformNames = Object.keys(platforms);

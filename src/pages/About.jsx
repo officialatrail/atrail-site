@@ -47,17 +47,25 @@ export default function About() {
                 href="https://youtube.com/@OfficialAtrail"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-[#FF0000] transition-colors"
               >
                 <Youtube size={18} /> YouTube
               </a>
               <a
-                href="https://linkedin.com"
+                href="https://www.linkedin.com/company/atrail/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-[#0A66C2] transition-colors"
               >
                 <Linkedin size={18} /> LinkedIn
+              </a>
+              <a
+                href="https://buymeacoffee.com/officialatrail/extras"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 text-sm font-semibold text-zinc-600 dark:text-zinc-400 hover:text-[#FFDD00] transition-colors"
+              >
+                <img src="https://cdn.simpleicons.org/buymeacoffee" alt="" className="w-[18px] h-[18px]" /> Buy Me a Coffee
               </a>
               <a
                 href="mailto:hello@officialatrail.online"

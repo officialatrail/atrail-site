@@ -29,7 +29,7 @@ export default function Videos() {
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {videos.map((video, index) => (
               <motion.button
                 key={video.videoId + index}
@@ -47,10 +47,8 @@ export default function Videos() {
                     alt={video.title}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   />
-                  <div className="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity duration-300">
-                    <div className="w-14 h-14 rounded-full border-2 border-white flex items-center justify-center">
-                      <Play className="w-6 h-6 text-white ml-0.5" />
-                    </div>
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <Play className="w-10 h-10 text-white/0 group-hover:text-white/70 transition-colors duration-300 drop-shadow-lg" />
                   </div>
                 </div>
                 <div className="p-5">

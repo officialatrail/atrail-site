@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Filter, ArrowRight, CheckCircle, X } from 'lucide-react';
+import { ArrowRight, CheckCircle, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ToolCard from '../components/ToolCard';
@@ -8,16 +8,11 @@ import { getTools, getComingSoon, joinWaitlist } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 
 export default function Tools() {
-  const [activeFilter, setActiveFilter] = useState('All');
   const [activePlatform, setActivePlatform] = useState('All');
   const tools = getTools();
   const comingSoon = getComingSoon();
-  const categories = ['All', ...new Set(tools.map((t) => t.category))];
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
-  const filtered = tools.filter((t) =>
-    (activeFilter === 'All' || t.category === activeFilter) &&
-    (activePlatform === 'All' || t.platform === activePlatform)
-  );
+  const filtered = tools.filter((t) => activePlatform === 'All' || t.platform === activePlatform);
   const [activeVideo, setActiveVideo] = useState(null);
 
   const [email, setEmail] = useState('');
@@ -59,28 +54,6 @@ export default function Tools() {
             className="flex flex-wrap justify-center gap-3 mb-12"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6, delay: 0.2 }}
-          >
-            {categories.map((filter) => (
-              <button
-                key={filter}
-                onClick={() => setActiveFilter(filter)}
-                className={`px-5 py-2.5 rounded-full font-medium text-sm transition-all duration-300 ${
-                  activeFilter === filter
-                    ? 'bg-brand-600 text-white shadow-lg'
-                    : 'bg-white dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400 hover:bg-slate-100 dark:hover:bg-zinc-800 hover:text-brand-600 dark:hover:text-brand-400 border border-slate-200 dark:border-zinc-700'
-                }`}
-              >
-                <Filter className="w-3.5 h-3.5 inline mr-1.5" />
-                {filter}
-              </button>
-            ))}
-          </motion.div>
-
-          <motion.div
-            className="flex flex-wrap justify-center gap-3 mb-12"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.3 }}
           >
             {toolPlatforms.map((platform) => (
@@ -95,14 +68,7 @@ export default function Tools() {
               >
                 {platform !== 'All' && platforms[platform] && (
                   <span className="w-4 h-4 inline-flex items-center justify-center">
-                    {(() => {
-                      const PlatformIcon = platforms[platform].icon;
-                      return PlatformIcon ? (
-                        <PlatformIcon className="w-full h-full" />
-                      ) : (
-                        <img src={`https://cdn.simpleicons.org/${platforms[platform].slug}`} alt={platform} className="w-full h-full object-contain" />
-                      );
-                    })()}
+                    <img src={platforms[platform].logo} alt={platform} className="w-full h-full object-contain" />
                   </span>
                 )}
                 {platform}

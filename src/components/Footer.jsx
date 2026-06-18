@@ -20,6 +20,7 @@ const Footer = () => {
   const socialLinks = [
     { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@OfficialAtrail', hoverClass: 'hover:bg-[#FF0000]' },
     { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/atrail/', hoverClass: 'hover:bg-[#0A66C2]' },
+    { name: 'Buy Me a Coffee', img: 'https://cdn.simpleicons.org/buymeacoffee/ffffff', href: 'https://buymeacoffee.com/officialatrail/extras', hoverClass: 'hover:bg-[#FFDD00]' },
     { name: 'Email', icon: Mail, href: 'mailto:hello@officialatrail.online', hoverClass: 'hover:bg-brand-600' },
   ];
 
@@ -55,7 +56,11 @@ const Footer = () => {
                     whileTap={{ scale: 0.95 }}
                     aria-label={social.name}
                   >
-                    <social.icon className="w-5 h-5" />
+                    {social.icon ? (
+                      <social.icon className="w-5 h-5" />
+                    ) : (
+                      <img src={social.img} alt={social.name} className="w-5 h-5" />
+                    )}
                   </motion.a>
                 ))}
               </div>
