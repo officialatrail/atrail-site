@@ -42,7 +42,7 @@ export default function About() {
               </p>
             ))}
 
-            <div className="flex items-center gap-4 mt-8">
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3 mt-8">
               <a
                 href="https://youtube.com/@OfficialAtrail"
                 target="_blank"

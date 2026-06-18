@@ -67,7 +67,7 @@ const Header = () => {
       )}
     <motion.header
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${
-        isScrolled
+        isScrolled || isMobileMenuOpen
           ? 'bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl shadow-lg border-b border-zinc-100 dark:border-zinc-800/60'
           : 'bg-transparent'
       }`}
@@ -181,7 +181,7 @@ const Header = () => {
       <AnimatePresence>
         {isMobileMenuOpen && (
           <motion.div
-            className="md:hidden bg-white/95 dark:bg-zinc-950/95 backdrop-blur-md border-t border-slate-200 dark:border-zinc-800"
+            className="md:hidden relative z-10 bg-white dark:bg-zinc-950 border-t border-slate-200 dark:border-zinc-800"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
