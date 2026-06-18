@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { categoryColors } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
+import BorderBeam from './BorderBeam';
 
 export default function ToolCard({ tool, locked, onPlayVideo }) {
   const platformInfo = tool.platform ? platforms[tool.platform] : null;
@@ -11,6 +12,7 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
 
   const inner = (
     <>
+      <BorderBeam />
       <div className="relative aspect-video bg-zinc-100 dark:bg-zinc-800 overflow-hidden rounded-xl mb-5">
         <img src={tool.image} alt={tool.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         {tool.link?.type === 'video' && (
@@ -56,7 +58,7 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
     </>
   );
 
-  const className = "card-rich group block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800 hover:border-slate-200 dark:hover:border-zinc-700";
+  const className = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800 hover:border-slate-200 dark:hover:border-zinc-700";
 
   if (locked) {
     return <div className={className}>{inner}</div>;

@@ -59,7 +59,7 @@ const Hero = () => {
           >
             Automate Your
             <br />
-            <span className="text-brand-600 dark:text-brand-400">
+            <span className="text-shimmer">
               Finance Workflow
             </span>
           </motion.h1>
