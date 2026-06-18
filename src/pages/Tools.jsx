@@ -6,8 +6,13 @@ import Footer from '../components/Footer';
 import ToolCard from '../components/ToolCard';
 import { getTools, getComingSoon, joinWaitlist } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
+import useDocumentHead from '../lib/useDocumentHead';
 
 export default function Tools() {
+  useDocumentHead(
+    'Automation Tools That Actually Work | Atrail',
+    'Free automation tools built into Excel and Google Sheets for bank reconciliation, financial modelling, and bookkeeping.'
+  );
   const [activePlatform, setActivePlatform] = useState('All');
   const tools = getTools();
   const comingSoon = getComingSoon();

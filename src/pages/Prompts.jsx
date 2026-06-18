@@ -6,8 +6,13 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail } from '../lib/contentStore';
+import useDocumentHead from '../lib/useDocumentHead';
 
 export default function Prompts() {
+  useDocumentHead(
+    'The Prompt Library | Atrail',
+    'AI prompts for financial modelling, reconciliation, reporting, and workflow automation. Copy, paste, adapt.'
+  );
   const [copiedIndex, setCopiedIndex] = useState(null);
   const prompts = getPrompts();
   const [unlocked, setUnlocked] = useState(false);

@@ -4,8 +4,13 @@ import { Youtube, Linkedin, Mail } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getAbout } from '../lib/contentStore';
+import useDocumentHead from '../lib/useDocumentHead';
 
 export default function About() {
+  useDocumentHead(
+    'About Atrail',
+    'Atrail is built by Michael, a community hub for finance and accounting professionals automating their work with AI and no-code tools.'
+  );
   const about = getAbout();
 
   return (

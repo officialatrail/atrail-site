@@ -4,6 +4,7 @@ import { Play, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getVideos } from '../lib/contentStore';
+import useDocumentHead from '../lib/useDocumentHead';
 
 function VideoCard({ video, index, onOpen }) {
   const [preview, setPreview] = useState(false);
@@ -57,6 +58,10 @@ function VideoCard({ video, index, onOpen }) {
 }
 
 export default function Videos() {
+  useDocumentHead(
+    'Videos & Walkthroughs | Atrail',
+    'Screen recordings and walkthroughs from the Atrail YouTube channel: bank reconciliation, prepayment schedules, and Excel automation.'
+  );
   const [active, setActive] = useState(null);
   const videos = getVideos();
 

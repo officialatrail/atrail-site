@@ -8,11 +8,17 @@ import NotFound from './NotFound';
 import ArticleRenderer from '../components/ArticleRenderer';
 import LikeButton from '../components/LikeButton';
 import { getArticles } from '../lib/contentStore';
+import useDocumentHead from '../lib/useDocumentHead';
 
 export default function ArticleDetail() {
   const { slug } = useParams();
   const articles = getArticles();
   const article = articles.find((a) => a.slug === slug);
+
+  useDocumentHead(
+    article ? `${article.title} | Atrail` : undefined,
+    article ? article.excerpt : undefined
+  );
 
   if (!article) return <NotFound />;
 

@@ -6,8 +6,13 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import { getArticles } from '../lib/contentStore';
+import useDocumentHead from '../lib/useDocumentHead';
 
 export default function Articles() {
+  useDocumentHead(
+    'Articles & Guides | Atrail',
+    'Written walkthroughs on finance and accounting automation: bank reconciliation, financial modelling, and bookkeeping with n8n, Claude, and Excel.'
+  );
   const articles = getArticles();
 
   return (
