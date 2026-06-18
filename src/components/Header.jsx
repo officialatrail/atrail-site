@@ -11,7 +11,7 @@ const Header = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [bannerDismissed, setBannerDismissed] = useState(() => isBannerDismissed());
   const location = useLocation();
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, isAdmin, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const showBanner = !bannerDismissed && !isAuthenticated;
   const bannerHeight = 52;
@@ -132,12 +132,14 @@ const Header = () => {
 
             {isAuthenticated ? (
               <>
-                <Link
-                  to="/admin"
-                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-brand-600 dark:hover:text-brand-400"
-                >
-                  <ShieldCheck size={16} /> Admin
-                </Link>
+                {isAdmin && (
+                  <Link
+                    to="/admin"
+                    className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-brand-600 dark:hover:text-brand-400"
+                  >
+                    <ShieldCheck size={16} /> Admin
+                  </Link>
+                )}
                 <button
                   onClick={logout}
                   className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-red-500"
@@ -201,13 +203,15 @@ const Header = () => {
               })}
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/admin"
-                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-zinc-100"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                  >
-                    <ShieldCheck size={16} /> Admin
-                  </Link>
+                  {isAdmin && (
+                    <Link
+                      to="/admin"
+                      className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                      onClick={() => setIsMobileMenuOpen(false)}
+                    >
+                      <ShieldCheck size={16} /> Admin
+                    </Link>
+                  )}
                   <button
                     onClick={() => { logout(); setIsMobileMenuOpen(false); }}
                     className="w-full flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-red-500"
