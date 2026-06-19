@@ -51,11 +51,29 @@ async function persist(saveFn, data, successMsg) {
 
 function ArticlesAdmin() {
   const [items, setItems] = useState(getArticles());
+  const textareaRefs = React.useRef({});
 
   const update = (index, field, value) => {
     const next = [...items];
     next[index] = { ...next[index], [field]: value };
     setItems(next);
+  };
+
+  const insertAtCursor = (index, block) => {
+    const textarea = textareaRefs.current[index];
+    const body = items[index].body;
+    if (!textarea) {
+      update(index, 'body', body + block);
+      return;
+    }
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    update(index, 'body', body.slice(0, start) + block + body.slice(end));
+    requestAnimationFrame(() => {
+      textarea.focus();
+      const pos = start + block.length;
+      textarea.setSelectionRange(pos, pos);
+    });
   };
 
   const save = () => persist(saveArticles, items, 'Articles saved');
@@ -111,10 +129,11 @@ function ArticlesAdmin() {
             <Field label="Excerpt">
               <textarea className={inputClass} rows={2} value={item.excerpt} onChange={(e) => update(i, 'excerpt', e.target.value)} />
             </Field>
-            <Field label="Body (Markdown: ## headings, **bold**, | tables |)">
-              <MediaInserter onInsert={(block) => update(i, 'body', item.body + block)} />
-              <ChartInserter onInsert={(block) => update(i, 'body', item.body + block)} />
+            <Field label="Body (Markdown: ## headings, **bold**, | tables |) - click into the body first to choose where things get inserted">
+              <MediaInserter onInsert={(block) => insertAtCursor(i, block)} />
+              <ChartInserter onInsert={(block) => insertAtCursor(i, block)} />
               <textarea
+                ref={(el) => (textareaRefs.current[i] = el)}
                 className={`${inputClass} font-mono`}
                 rows={10}
                 value={item.body}
