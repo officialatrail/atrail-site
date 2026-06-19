@@ -1,34 +1,48 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Copy, Check, CheckCircle } from 'lucide-react';
+import { Copy, Check, CheckCircle, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
+import Highlight from '../components/Highlight';
 
 export default function Prompts() {
   useDocumentHead(
     'The Prompt Library | Atrail',
     'AI prompts for financial modelling, reconciliation, reporting, and workflow automation. Copy, paste, adapt.'
   );
-  const [copiedIndex, setCopiedIndex] = useState(null);
+  const [copiedKey, setCopiedKey] = useState(null);
   const prompts = getPrompts();
   const [unlocked, setUnlocked] = useState(false);
   const [requested, setRequested] = useState(() => !!getMyEmail());
   const [email, setEmail] = useState('');
+  const [search, setSearch] = useState('');
+  const [expanded, setExpanded] = useState({});
 
   useEffect(() => {
     isMyEmailApproved().then(setUnlocked);
   }, []);
 
-  const handleCopy = async (text, index) => {
+  const handleCopy = async (text, key) => {
     await navigator.clipboard.writeText(text);
-    setCopiedIndex(index);
+    setCopiedKey(key);
     toast.success('Prompt copied to clipboard');
-    setTimeout(() => setCopiedIndex(null), 2000);
+    setTimeout(() => setCopiedKey(null), 2000);
   };
+
+  const toggleExpanded = (key) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
+
+  const filteredPrompts = prompts.filter((p) => {
+    const q = search.toLowerCase();
+    return (
+      p.title.toLowerCase().includes(q) ||
+      p.description.toLowerCase().includes(q) ||
+      p.category.toLowerCase().includes(q)
+    );
+  });
 
   const handleRequest = async (e) => {
     e.preventDefault();
@@ -54,8 +68,7 @@ export default function Prompts() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-              The Prompt
-              <span className="text-brand-600 dark:text-brand-400"> Library</span>
+              The Prompt <Highlight>Library</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               AI prompts Michael actually uses for financial modelling, reconciliation, reporting, and
@@ -63,9 +76,28 @@ export default function Prompts() {
             </p>
           </motion.div>
 
+          <div className="relative max-w-xl mx-auto mb-12">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search prompts..."
+              className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+          </div>
+
+          {filteredPrompts.length === 0 && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No prompts match "{search}".</p>
+          )}
+
           <div className="space-y-6">
-            {prompts.map((p, index) => {
+            {filteredPrompts.map((p, index) => {
               const isLocked = p.locked && !unlocked;
+              const lines = p.prompt.split('\n');
+              const isLong = lines.length > 8;
+              const isExpanded = !!expanded[p.title];
+              const displayPrompt = isLong && !isExpanded ? lines.slice(0, 8).join('\n') + '\n...' : p.prompt;
               return (
                 <motion.div
                   key={p.title}
@@ -92,10 +124,10 @@ export default function Prompts() {
                       </div>
                       {!isLocked && (
                         <button
-                          onClick={() => handleCopy(p.prompt, index)}
+                          onClick={() => handleCopy(p.prompt, p.title)}
                           className="shrink-0 inline-flex items-center gap-1.5 text-sm font-semibold px-4 py-2 rounded-full bg-brand-600 text-white hover:bg-brand-700 transition-all duration-200"
                         >
-                          {copiedIndex === index ? (
+                          {copiedKey === p.title ? (
                             <>Copied <Check size={14} /></>
                           ) : (
                             <>Copy <Copy size={14} /></>
@@ -137,9 +169,23 @@ export default function Prompts() {
                         </div>
                       </>
                     ) : (
-                      <pre className="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl p-5 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono border border-zinc-200 dark:border-zinc-700">
-                        {p.prompt}
-                      </pre>
+                      <>
+                        <pre className="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl p-5 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono border border-zinc-200 dark:border-zinc-700">
+                          {displayPrompt}
+                        </pre>
+                        {isLong && (
+                          <button
+                            onClick={() => toggleExpanded(p.title)}
+                            className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400 hover:text-brand-700"
+                          >
+                            {isExpanded ? (
+                              <>Show less <ChevronUp size={13} /></>
+                            ) : (
+                              <>Show full prompt <ChevronDown size={13} /></>
+                            )}
+                          </button>
+                        )}
+                      </>
                     )}
 
                     <div className="mt-4">

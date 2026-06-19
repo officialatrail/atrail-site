@@ -7,6 +7,7 @@ import StarField from './StarField';
 import MouseGlow from './MouseGlow';
 import ElegantShapes from './ElegantShapes';
 import MagnetizeWrap from './MagnetizeWrap';
+import Highlight from './Highlight';
 
 const stack = [
   { name: 'n8n', img: 'https://cdn.simpleicons.org/n8n' },
@@ -54,9 +55,7 @@ const Hero = () => {
           >
             Automate Your
             <br />
-            <span className="text-brand-600 dark:text-brand-400">
-              Finance Workflow
-            </span>
+            <Highlight>Finance Workflow</Highlight>
           </motion.h1>
 
           <motion.p
@@ -65,9 +64,8 @@ const Hero = () => {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
           >
-            Join a community of finance professionals automating bank reconciliation, financial
-            modelling, and bookkeeping with real articles, free tools, and AI prompts. Built for
-            finance professionals, not hype.
+            Join a community of professionals automating workflows like bank reconciliation,
+            financial modelling, and bookkeeping with real articles, free tools, files, and AI prompts.
           </motion.p>
 
           <motion.div
@@ -80,7 +78,7 @@ const Hero = () => {
               <motion.div whileHover={{ scale: 1.05, y: -2 }} whileTap={{ scale: 0.95 }}>
                 <Link
                   to={isAuthenticated ? '/tools' : '/login'}
-                  className="btn-shine bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl shadow-brand-500/20 hover:shadow-2xl flex items-center group"
+                  className="btn-shine btn-pulse bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl shadow-brand-500/20 hover:shadow-2xl flex items-center group"
                 >
                   Get Started
                   <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform duration-200" />

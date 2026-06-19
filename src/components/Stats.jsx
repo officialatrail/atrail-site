@@ -8,6 +8,11 @@ const Stats = () => {
 
   return (
     <section className="py-20 bg-gradient-to-br from-brand-700 to-brand-500 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="absolute -left-16 top-0 w-[55%] h-full bg-black/10 -skew-x-12 origin-top-left" />
+        <div className="absolute right-0 top-0 w-[30%] h-full bg-black/10 skew-x-12" />
+        <div className="absolute left-[20%] top-0 w-[15%] h-full bg-white/5 -skew-x-12" />
+      </div>
       <div className="absolute top-10 right-10 w-72 h-72 bg-white/10 rounded-full blur-3xl" />
       <div className="absolute bottom-10 left-10 w-72 h-72 bg-white/5 rounded-full blur-3xl" />
 

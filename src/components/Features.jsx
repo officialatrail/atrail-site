@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { getPillars } from '../lib/contentStore';
 import { iconRegistry } from '../lib/iconRegistry';
 import RotatingImage from './RotatingImage';
+import Highlight from './Highlight';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -28,11 +29,10 @@ const Features = () => {
           transition={{ duration: 0.8 }}
         >
           <h2 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-            Real Automations for
-            <span className="text-brand-600 dark:text-brand-400"> Real Finance Work</span>
+            Real <Highlight>Automation and Workflows</Highlight>
           </h2>
           <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
-            Not demos, not generic AI hype, just workflows you can implement the same day.
+            Automation and AI workflows you can implement.
           </p>
         </motion.div>
 

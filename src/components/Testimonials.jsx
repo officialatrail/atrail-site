@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { ArrowRight, Lock } from 'lucide-react';
 import { getArticles, getPrompts, getTools } from '../lib/contentStore';
 import { useAuth } from '../context/AuthContext';
+import Highlight from './Highlight';
 
 const typeStyle = {
   Article: { background: 'rgba(10,150,80,0.1)', color: '#067C40' },
@@ -53,11 +54,10 @@ const Testimonials = () => {
         >
           <div>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-4">
-              From the
-              <span className="text-brand-600 dark:text-brand-400"> Library</span>
+              From the <Highlight>Library</Highlight>
             </h2>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl">
-              Articles, tools, and prompts, all focused on automating real finance and accounting work.
+              View community articles, tools, prompts, and workflows.
             </p>
           </div>
           <Link

@@ -1,12 +1,13 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, Search } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import { getArticles } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
+import Highlight from '../components/Highlight';
 
 export default function Articles() {
   useDocumentHead(
@@ -14,6 +15,11 @@ export default function Articles() {
     'Written walkthroughs on finance and accounting automation: bank reconciliation, financial modelling, and bookkeeping with n8n, Claude, and Excel.'
   );
   const articles = getArticles();
+  const [search, setSearch] = useState('');
+  const filteredArticles = articles.filter((a) => {
+    const q = search.toLowerCase();
+    return a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.category.toLowerCase().includes(q);
+  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -27,16 +33,30 @@ export default function Articles() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-              Articles &
-              <span className="text-brand-600 dark:text-brand-400"> Guides</span>
+              Articles & <Highlight>Guides</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               Written walkthroughs on finance and accounting automation, no fluff, no hype.
             </p>
           </motion.div>
 
+          <div className="relative max-w-xl mx-auto mb-12">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search articles..."
+              className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+          </div>
+
+          {filteredArticles.length === 0 && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No articles match "{search}".</p>
+          )}
+
           <div className="space-y-6">
-            {articles.map((article, index) => (
+            {filteredArticles.map((article, index) => (
               <motion.div
                 key={article.slug}
                 initial={{ opacity: 0, y: 20 }}

@@ -1,10 +1,11 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Play, X } from 'lucide-react';
+import { Play, X, Search } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getVideos } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
+import Highlight from '../components/Highlight';
 
 function VideoCard({ video, index, onOpen }) {
   const [preview, setPreview] = useState(false);
@@ -64,6 +65,11 @@ export default function Videos() {
   );
   const [active, setActive] = useState(null);
   const videos = getVideos();
+  const [search, setSearch] = useState('');
+  const filteredVideos = videos.filter((v) => {
+    const q = search.toLowerCase();
+    return v.title.toLowerCase().includes(q) || v.description.toLowerCase().includes(q);
+  });
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -77,16 +83,30 @@ export default function Videos() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-              Videos
-              <span className="text-brand-600 dark:text-brand-400"> & Walkthroughs</span>
+              Videos <Highlight>& Walkthroughs</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               Screen recordings and walkthroughs from the Atrail YouTube channel.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {videos.map((video, index) => (
+          <div className="relative max-w-xl mx-auto mb-12">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
+            <input
+              type="text"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search videos..."
+              className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
+            />
+          </div>
+
+          {filteredVideos.length === 0 && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No videos match "{search}".</p>
+          )}
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+            {filteredVideos.map((video, index) => (
               <VideoCard key={video.videoId + index} video={video} index={index} onOpen={setActive} />
             ))}
           </div>

@@ -5,6 +5,7 @@ import { ArrowRight, Lock, X } from 'lucide-react';
 import { getTools } from '../lib/contentStore';
 import { useAuth } from '../context/AuthContext';
 import ToolCard from './ToolCard';
+import Highlight from './Highlight';
 
 const Portfolio = () => {
   const tools = getTools();
@@ -27,11 +28,10 @@ const Portfolio = () => {
               <Lock size={11} /> Members Only
             </div>
             <h2 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-4">
-              Tools That
-              <span className="text-brand-600 dark:text-brand-400"> Actually Work</span>
+              Tools That <Highlight>Actually Work</Highlight>
             </h2>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl">
-              Automation tools built directly into Google Sheets. Sign in to unlock the full library.
+              Automation tools built on familiar tools like Excel, Google Sheets, and more. Sign in to unlock the full library.
             </p>
           </div>
           <Link

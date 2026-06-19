@@ -11,9 +11,9 @@ const Footer = () => {
       { name: 'Tools', href: '/tools' },
       { name: 'Prompts', href: '/prompts' },
     ],
-    Company: [
+    Community: [
       { name: 'About', href: '/about' },
-      { name: 'Contact', href: 'mailto:hello@officialatrail.online' },
+      { name: 'Contact', href: 'mailto:officialatrail@gmail.com' },
     ],
   };
 
@@ -21,7 +21,7 @@ const Footer = () => {
     { name: 'YouTube', icon: Youtube, href: 'https://youtube.com/@OfficialAtrail', hoverClass: 'hover:bg-[#FF0000]' },
     { name: 'LinkedIn', icon: Linkedin, href: 'https://www.linkedin.com/company/atrail/', hoverClass: 'hover:bg-[#0A66C2]' },
     { name: 'Buy Me a Coffee', img: 'https://cdn.simpleicons.org/buymeacoffee/ffffff', href: 'https://buymeacoffee.com/officialatrail/extras', hoverClass: 'hover:bg-[#FFDD00]' },
-    { name: 'Email', icon: Mail, href: 'mailto:hello@officialatrail.online', hoverClass: 'hover:bg-brand-600' },
+    { name: 'Email', icon: Mail, href: 'mailto:officialatrail@gmail.com', hoverClass: 'hover:bg-brand-600' },
   ];
 
   return (
@@ -41,7 +41,7 @@ const Footer = () => {
                 <h2 className="font-rubik text-3xl font-bold text-white">Atrail</h2>
               </div>
               <p className="font-rubik text-zinc-400 mb-6 leading-relaxed max-w-sm">
-                A community hub for finance and accounting workflow automation, built around n8n, Claude, and Excel.
+                A community hub for finance and accounting workflow automation, built around n8n, Claude, Excel, etc.
               </p>
 
               <div className="flex space-x-4">

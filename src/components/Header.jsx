@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut, Sparkles, ArrowRight } from 'lucide-react';
+import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -62,13 +62,10 @@ const Header = () => {
         >
           <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(circle, white 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-center gap-3 text-center relative">
-            <span className="hidden sm:flex w-7 h-7 rounded-full bg-white/15 items-center justify-center shrink-0">
-              <Sparkles size={14} />
-            </span>
             <span className="font-rubik text-sm sm:text-base font-medium">
-              Join the Atrail community to unlock tools and prompts.{' '}
+              Join the Atrail community to unlock tools and prompts{' '}
               <Link to="/login" className="inline-flex items-center gap-1 underline font-bold hover:text-brand-100">
-                Sign in free <ArrowRight size={13} />
+                Sign in free
               </Link>
             </span>
             <button

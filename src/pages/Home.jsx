@@ -11,7 +11,7 @@ import useDocumentHead from '../lib/useDocumentHead';
 export default function Home() {
   useDocumentHead(
     'Atrail: Finance Automation Hub',
-    'Atrail is a community hub for finance and accounting workflow automation. Articles, tools, and AI prompts for automating reconciliation, financial modelling, and bookkeeping with n8n, Claude, and Excel.'
+    'Atrail is a community hub for finance and accounting workflow automation. Articles, tools, files, and AI prompts for automating workflows like reconciliation, financial modelling, and bookkeeping with n8n, Claude, Excel, etc.'
   );
 
   return (

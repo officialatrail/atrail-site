@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import rehypeRaw from 'rehype-raw';
 import ChartBlock from './ChartBlock';
 
 // Splits markdown on ```chart ... ``` fences so chart JSON can be rendered
@@ -49,6 +50,18 @@ const markdownComponents = {
   th: ({ node, ...props }) => <th className="px-4 py-3 text-sm font-bold text-zinc-700 dark:text-zinc-200 border-b border-slate-200 dark:border-zinc-700" {...props} />,
   td: ({ node, ...props }) => <td className="font-rubik px-4 py-3 text-sm text-zinc-600 dark:text-zinc-400 border-b border-slate-100 dark:border-zinc-800" {...props} />,
   strong: ({ node, ...props }) => <strong className="font-bold text-zinc-900 dark:text-white" {...props} />,
+  img: ({ node, ...props }) => (
+    // eslint-disable-next-line jsx-a11y/alt-text
+    <img className="w-full rounded-xl my-8 shadow-lg" loading="lazy" {...props} />
+  ),
+  iframe: ({ node, ...props }) => (
+    <div className="relative w-full aspect-video my-8 rounded-xl overflow-hidden shadow-lg">
+      <iframe className="absolute inset-0 w-full h-full" allowFullScreen {...props} />
+    </div>
+  ),
+  video: ({ node, ...props }) => (
+    <video className="w-full rounded-xl my-8 shadow-lg" controls {...props} />
+  ),
 };
 
 export default function ArticleRenderer({ body }) {
@@ -62,7 +75,7 @@ export default function ArticleRenderer({ body }) {
         part.type === 'chart' ? (
           <ChartBlock key={i} spec={part.content} />
         ) : (
-          <ReactMarkdown key={i} remarkPlugins={[remarkGfm]} components={markdownComponents}>
+          <ReactMarkdown key={i} remarkPlugins={[remarkGfm]} rehypePlugins={[rehypeRaw]} components={markdownComponents}>
             {part.content}
           </ReactMarkdown>
         )

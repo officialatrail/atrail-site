@@ -7,11 +7,12 @@ import ToolCard from '../components/ToolCard';
 import { getTools, getComingSoon, joinWaitlist } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 import useDocumentHead from '../lib/useDocumentHead';
+import Highlight from '../components/Highlight';
 
 export default function Tools() {
   useDocumentHead(
     'Automation Tools That Actually Work | Atrail',
-    'Free automation tools built into Excel and Google Sheets for bank reconciliation, financial modelling, and bookkeeping.'
+    'Free automation tools built on familiar tools like Excel and Google Sheets, for bank reconciliation, financial modelling, and bookkeeping.'
   );
   const [activePlatform, setActivePlatform] = useState('All');
   const tools = getTools();
@@ -47,11 +48,10 @@ export default function Tools() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-              Automation Tools
-              <span className="text-brand-600 dark:text-brand-400"> That Actually Work</span>
+              Automation Tools <Highlight>That Actually Work</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
-              Built on Google Sheets, no extra software, no subscriptions, no complexity.
+              Automation tools built on familiar tools like Excel, Google Sheets, and more.
             </p>
           </motion.div>
 

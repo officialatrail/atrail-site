@@ -5,6 +5,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { getAbout } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
+import Highlight from '../components/Highlight';
 
 export default function About() {
   useDocumentHead(
@@ -25,8 +26,7 @@ export default function About() {
             transition={{ duration: 0.8 }}
           >
             <h1 className="font-display text-4xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6">
-              About
-              <span className="text-brand-600 dark:text-brand-400"> Atrail</span>
+              About <Highlight>Atrail</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               Built by Michael, a community hub for finance and accounting professionals

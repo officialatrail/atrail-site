@@ -110,7 +110,7 @@ function ArticlesAdmin() {
             <Field label="Excerpt">
               <textarea className={inputClass} rows={2} value={item.excerpt} onChange={(e) => update(i, 'excerpt', e.target.value)} />
             </Field>
-            <Field label="Body (Markdown: ## headings, **bold**, | tables |)">
+            <Field label="Body (Markdown: ## headings, **bold**, | tables |, ![alt](image-or-gif-url), ```code```, or paste an <iframe>/<video> tag for video)">
               <ChartInserter onInsert={(block) => update(i, 'body', item.body + block)} />
               <textarea
                 className={`${inputClass} font-mono`}

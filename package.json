@@ -23,6 +23,7 @@
             "react-router-dom": "^6.23.0",
             "react-toastify": "^11.0.5",
             "recharts": "^2.12.7",
+            "rehype-raw": "^7.0.0",
             "remark-gfm": "^4.0.1",
             "tailwindcss": "^3.4.1",
             "vite": "^5.4.21",
