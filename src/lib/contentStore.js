@@ -9,8 +9,8 @@ export { categoryColors };
 
 const defaultAbout = {
   bioParagraphs: [
-    "Atrail exists because most finance and accounting automation content online is either too generic to use, or too tool-specific to adapt. Every article, tool, and prompt here is built around a real task: reconciling a bank statement, building a prepayment schedule, putting together a financial model under deadline.",
-    "The goal is not to chase AI hype. It's to find the workflows that genuinely save hours of manual work, document them clearly, and ship the tools that make them reusable.",
+    "Atrail is built around real tasks: reconciling a bank statement, building a prepayment schedule, putting together a financial model under deadline. Every article, tool, and prompt here comes from doing the actual work.",
+    "The focus is on workflows that genuinely save hours of manual work, documented clearly, with the tools that make them reusable shipped right alongside.",
   ],
   focusAreas: [
     'n8n workflow automation for finance teams',

@@ -43,7 +43,7 @@ const Hero = () => {
       <div className="absolute inset-0 pointer-events-none bg-gradient-to-t from-white dark:from-[#04060a] via-transparent to-white/40 dark:to-[#04060a]/40" />
 
       <motion.div
-        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-20"
+        className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-32"
         style={{ rotateX, rotateY, transformStyle: 'preserve-3d' }}
       >
         <div className="text-center">

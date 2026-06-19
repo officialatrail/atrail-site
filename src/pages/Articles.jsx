@@ -36,7 +36,7 @@ export default function Articles() {
               Articles & <Highlight>Guides</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Written walkthroughs on finance and accounting automation, no fluff, no hype.
+              Written walkthroughs on finance and accounting automation.
             </p>
           </motion.div>
 

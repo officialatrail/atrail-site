@@ -46,13 +46,16 @@ function VideoCard({ video, index, onOpen }) {
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
         )}
-        <div className="absolute inset-0 flex items-center justify-center">
-          <Play className={`w-10 h-10 text-white/70 drop-shadow-lg transition-opacity duration-300 ${preview ? 'opacity-0' : 'opacity-0 group-hover:opacity-100'}`} />
-        </div>
+        {!preview && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
+              <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+            </div>
+          </div>
+        )}
       </div>
-      <div className="p-5">
-        <h3 className="font-bold text-zinc-900 dark:text-white mb-2">{video.title}</h3>
-        <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400">{video.description}</p>
+      <div className="p-4">
+        <h3 className="font-bold text-zinc-900 dark:text-white text-sm leading-snug line-clamp-2">{video.title}</h3>
       </div>
     </motion.button>
   );
@@ -75,7 +78,7 @@ export default function Videos() {
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
       <Header />
       <main className="pt-32 pb-24">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
             className="text-center mb-16"
             initial={{ opacity: 0, y: 30 }}
