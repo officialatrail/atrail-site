@@ -18,11 +18,12 @@ import {
   getComingSoon, saveComingSoon,
   fetchWaitlist,
   fetchExclusiveRequests, fetchApprovedEmails, approveEmail, revokeEmail,
+  fetchAllUsers,
   getStats, saveStats,
   slugify,
 } from '../lib/contentStore';
 
-const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access'];
+const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users'];
 
 function Field({ label, children }) {
   return (
@@ -588,6 +589,77 @@ function ExclusiveAdmin() {
   );
 }
 
+function UsersAdmin() {
+  const [users, setUsers] = useState(null);
+  const [approved, setApproved] = useState([]);
+
+  const reload = () => {
+    fetchAllUsers().then(setUsers).catch(() => setUsers([]));
+    fetchApprovedEmails().then(setApproved).catch(() => setApproved([]));
+  };
+
+  useEffect(() => { reload(); }, []);
+
+  const approve = async (email) => {
+    try {
+      await approveEmail(email);
+      toast.success(`${email} can now view exclusive prompts`);
+      reload();
+    } catch {
+      toast.error('Could not approve - try again.');
+    }
+  };
+
+  const revoke = async (email) => {
+    try {
+      await revokeEmail(email);
+      reload();
+    } catch {
+      toast.error('Could not revoke - try again.');
+    }
+  };
+
+  if (users === null) {
+    return <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">Loading...</p>;
+  }
+
+  return (
+    <div className={cardClass}>
+      <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-4">
+        {users.length} signed-up {users.length === 1 ? 'user' : 'users'}. Grant exclusive access directly from here.
+      </p>
+      {users.length === 0 ? (
+        <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">
+          No users found yet - if you already have signups, make sure the <code>profiles</code> table setup has been run in Supabase.
+        </p>
+      ) : (
+        <ul className="divide-y divide-slate-100 dark:divide-zinc-800">
+          {users.map((u, i) => {
+            const isApproved = approved.includes(u.email);
+            return (
+              <li key={i} className="py-2.5 flex items-center justify-between text-sm">
+                <div>
+                  <span className="font-rubik text-zinc-700 dark:text-zinc-300">{u.email}</span>
+                  <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(u.created_at).toLocaleDateString()}</span>
+                </div>
+                {isApproved ? (
+                  <button onClick={() => revoke(u.email)} className="font-rubik text-xs font-semibold text-red-500 hover:text-red-600">
+                    Revoke exclusive
+                  </button>
+                ) : (
+                  <button onClick={() => approve(u.email)} className="font-rubik text-xs font-semibold text-brand-600 hover:text-brand-700">
+                    Grant exclusive
+                  </button>
+                )}
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </div>
+  );
+}
+
 export default function Admin() {
   const [tab, setTab] = useState('Articles');
   const { logout } = useAuth();
@@ -631,6 +703,7 @@ export default function Admin() {
             {tab === 'Coming Soon' && <ComingSoonAdmin />}
             {tab === 'Waitlist' && <WaitlistAdmin />}
             {tab === 'Exclusive Access' && <ExclusiveAdmin />}
+            {tab === 'Users' && <UsersAdmin />}
           </motion.div>
         </div>
       </main>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut, Sparkles, ArrowRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -14,13 +14,28 @@ const Header = () => {
   const { isAuthenticated, isAdmin, logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const showBanner = !bannerDismissed && !isAuthenticated;
-  const bannerHeight = 52;
+  const bannerRef = useRef(null);
+  const [bannerHeight, setBannerHeight] = useState(52);
 
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
+
+  useEffect(() => {
+    if (!showBanner || !bannerRef.current) return;
+    const el = bannerRef.current;
+    const update = () => setBannerHeight(el.offsetHeight);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    window.addEventListener('resize', update);
+    return () => {
+      ro.disconnect();
+      window.removeEventListener('resize', update);
+    };
+  }, [showBanner]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -38,6 +53,7 @@ const Header = () => {
     <>
       {showBanner && (
         <motion.div
+          ref={bannerRef}
           className="fixed top-0 left-0 right-0 z-[60] text-white overflow-hidden"
           style={{ background: 'linear-gradient(90deg, #055430 0%, #0a9650 50%, #067C40 100%)' }}
           initial={{ y: -60 }}
@@ -83,12 +99,12 @@ const Header = () => {
               <img
                 src={`${import.meta.env.BASE_URL}images/logo-green.png`}
                 alt="Atrail"
-                className="w-8 h-8 object-contain dark:hidden"
+                className="w-10 h-10 object-contain dark:hidden"
               />
               <img
                 src={`${import.meta.env.BASE_URL}images/logo-white.png`}
                 alt="Atrail"
-                className="w-8 h-8 object-contain hidden dark:block"
+                className="w-10 h-10 object-contain hidden dark:block"
               />
               <span className="font-rubik text-2xl font-bold text-brand-600 dark:text-white">Atrail</span>
             </Link>

@@ -34,6 +34,7 @@ const defaultComingSoon = {
 
 const defaultStats = [
   { label: 'Community Across Platforms', value: 600, suffix: '+' },
+  { label: 'Views', value: 400, suffix: 'K+' },
   { label: 'Videos Published', value: 30, suffix: '+' },
   { label: 'Tool Downloads', value: 30, suffix: '+' },
 ];
@@ -151,6 +152,15 @@ export async function requestExclusiveAccess(email) {
 export async function fetchExclusiveRequests() {
   const { data, error } = await supabase
     .from('exclusive_requests')
+    .select('email, created_at')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return data;
+}
+
+export async function fetchAllUsers() {
+  const { data, error } = await supabase
+    .from('profiles')
     .select('email, created_at')
     .order('created_at', { ascending: false });
   if (error) throw error;
