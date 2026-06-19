@@ -8,6 +8,7 @@ import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
 import ChartInserter from '../components/ChartInserter';
 import ImageUpload from '../components/ImageUpload';
+import MediaInserter from '../components/MediaInserter';
 import {
   getArticles, saveArticles,
   getTools, saveTools,
@@ -110,7 +111,8 @@ function ArticlesAdmin() {
             <Field label="Excerpt">
               <textarea className={inputClass} rows={2} value={item.excerpt} onChange={(e) => update(i, 'excerpt', e.target.value)} />
             </Field>
-            <Field label="Body (Markdown: ## headings, **bold**, | tables |, ![alt](image-or-gif-url), ```code```, or paste an <iframe>/<video> tag for video)">
+            <Field label="Body (Markdown: ## headings, **bold**, | tables |)">
+              <MediaInserter onInsert={(block) => update(i, 'body', item.body + block)} />
               <ChartInserter onInsert={(block) => update(i, 'body', item.body + block)} />
               <textarea
                 className={`${inputClass} font-mono`}
