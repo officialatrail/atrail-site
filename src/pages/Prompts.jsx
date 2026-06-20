@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Copy, Check, CheckCircle, Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'react-toastify';
@@ -8,14 +9,18 @@ import LikeButton from '../components/LikeButton';
 import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
+import { useAuth } from '../context/AuthContext';
 
 export default function Prompts() {
   useDocumentHead(
     'The Prompt Library | Atrail',
-    'AI prompts for financial modelling, reconciliation, reporting, and workflow automation. Copy, paste, adapt.'
+    'AI prompts for workflow automation. Copy, paste, adapt.'
   );
+  const { isAuthenticated } = useAuth();
   const [copiedKey, setCopiedKey] = useState(null);
-  const prompts = getPrompts();
+  const allPrompts = getPrompts();
+  const prompts = allPrompts.filter((p) => !p.membersOnly || isAuthenticated);
+  const hiddenCount = allPrompts.length - prompts.length;
   const [unlocked, setUnlocked] = useState(false);
   const [requested, setRequested] = useState(() => !!getMyEmail());
   const [email, setEmail] = useState('');
@@ -71,8 +76,7 @@ export default function Prompts() {
               The Prompt <Highlight>Library</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              AI prompts Michael actually uses for financial modelling, reconciliation, reporting, and
-              workflow automation. Copy, paste, adapt.
+              AI prompts for workflow automation. Copy, paste, adapt.
             </p>
           </motion.div>
 
@@ -86,6 +90,12 @@ export default function Prompts() {
               className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
           </div>
+
+          {!isAuthenticated && hiddenCount > 0 && (
+            <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-12">
+              <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link> to see {hiddenCount} more prompt{hiddenCount === 1 ? '' : 's'}.
+            </p>
+          )}
 
           {filteredPrompts.length === 0 && (
             <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No prompts match "{search}".</p>
@@ -139,7 +149,7 @@ export default function Prompts() {
 
                     {isLocked ? (
                       <>
-                        <div className="bg-zinc-100 dark:bg-zinc-800 rounded-xl p-5 text-sm font-mono text-zinc-400 dark:text-zinc-500 filter blur-[4px] select-none pointer-events-none">
+                        <div className="bg-zinc-900 dark:bg-white rounded-xl p-5 text-sm font-mono text-zinc-500 dark:text-zinc-400 filter blur-[4px] select-none pointer-events-none">
                           {p.prompt}
                         </div>
                         <div className="mt-4">
@@ -170,7 +180,7 @@ export default function Prompts() {
                       </>
                     ) : (
                       <>
-                        <pre className="bg-zinc-100 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl p-5 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono border border-zinc-200 dark:border-zinc-700">
+                        <pre className="bg-zinc-900 dark:bg-white text-zinc-50 dark:text-zinc-900 rounded-xl p-5 text-sm leading-relaxed overflow-x-auto whitespace-pre-wrap font-mono border border-zinc-800 dark:border-zinc-200">
                           {displayPrompt}
                         </pre>
                         {isLong && (

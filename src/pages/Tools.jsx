@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle, X } from 'lucide-react';
 import Header from '../components/Header';
@@ -8,14 +9,18 @@ import { getTools, getComingSoon, joinWaitlist } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
+import { useAuth } from '../context/AuthContext';
 
 export default function Tools() {
   useDocumentHead(
     'Automation Tools That Actually Work | Atrail',
     'Free automation tools built on familiar tools like Excel and Google Sheets, for bank reconciliation, financial modelling, and bookkeeping.'
   );
+  const { isAuthenticated } = useAuth();
   const [activePlatform, setActivePlatform] = useState('All');
-  const tools = getTools();
+  const allTools = getTools();
+  const tools = allTools.filter((t) => !t.membersOnly || isAuthenticated);
+  const hiddenCount = allTools.length - tools.length;
   const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
   const filtered = tools.filter((t) => activePlatform === 'All' || t.platform === activePlatform);
@@ -80,6 +85,12 @@ export default function Tools() {
               </button>
             ))}
           </motion.div>
+
+          {!isAuthenticated && hiddenCount > 0 && (
+            <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-8">
+              <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link> to see {hiddenCount} more tool{hiddenCount === 1 ? '' : 's'}.
+            </p>
+          )}
 
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" layout>
             <AnimatePresence>

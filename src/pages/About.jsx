@@ -10,7 +10,7 @@ import Highlight from '../components/Highlight';
 export default function About() {
   useDocumentHead(
     'About Atrail',
-    'Atrail is built by Michael, a community hub for finance and accounting professionals automating their work with AI and no-code tools.'
+    'Atrail is built by Michael, a community hub for finance professionals automating their work with AI and no-code tools.'
   );
   const about = getAbout();
 
@@ -29,7 +29,7 @@ export default function About() {
               About <Highlight>Atrail</Highlight>
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
-              Built by Michael, a community hub for finance and accounting professionals
+              Built by Michael, a community hub for finance professionals
               who want to automate their work with AI and no-code tools.
             </p>
           </motion.div>
