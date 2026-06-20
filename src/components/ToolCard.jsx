@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, ArrowUpRight } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
 
@@ -11,11 +11,6 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
   const inner = (
     <>
       <BorderBeam />
-      {!locked && (
-        <span className="absolute top-4 right-4 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/90 dark:bg-zinc-800/90 text-zinc-400 dark:text-zinc-500 shadow-sm border border-zinc-100 dark:border-zinc-700 transition-all duration-300 group-hover:bg-brand-600 group-hover:text-white group-hover:border-brand-600 group-hover:scale-110">
-          <ArrowUpRight size={15} />
-        </span>
-      )}
       <div className="relative aspect-video bg-zinc-100 dark:bg-zinc-800 overflow-hidden rounded-xl mb-5">
         <img src={tool.image} alt={tool.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         {tool.link?.type === 'video' && (
@@ -47,10 +42,12 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
     </>
   );
 
-  const className = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-lg hover:shadow-2xl transition-all duration-300 border border-slate-100 dark:border-zinc-800 hover:border-slate-200 dark:hover:border-zinc-700";
+  const lockedClassName = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-lg border border-slate-100 dark:border-zinc-800";
+
+  const className = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-[0_4px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.06)] dark:hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] transition-all duration-150 border-2 border-slate-200 dark:border-zinc-700 hover:border-brand-300 dark:hover:border-brand-700 -translate-y-0.5 hover:translate-y-0 active:translate-y-0.5 active:shadow-none cursor-pointer";
 
   if (locked) {
-    return <div className={className}>{inner}</div>;
+    return <div className={lockedClassName}>{inner}</div>;
   }
 
   if (tool.link?.type === 'article') {
