@@ -19,7 +19,7 @@ export default function Prompts() {
   const { isAuthenticated } = useAuth();
   const [copiedKey, setCopiedKey] = useState(null);
   const allPrompts = getPrompts();
-  const prompts = allPrompts.filter((p) => !p.membersOnly || isAuthenticated);
+  const prompts = allPrompts.filter((p) => p.openToPublic || isAuthenticated);
   const hiddenCount = allPrompts.length - prompts.length;
   const [unlocked, setUnlocked] = useState(false);
   const [requested, setRequested] = useState(() => !!getMyEmail());

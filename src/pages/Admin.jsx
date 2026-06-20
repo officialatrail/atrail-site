@@ -206,8 +206,8 @@ function ToolsAdmin() {
             </Field>
           </div>
           <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 mb-3 mt-3">
-            <input type="checkbox" checked={!!item.membersOnly} onChange={(e) => update(i, 'membersOnly', e.target.checked)} />
-            Members only (hidden completely from visitors who aren't signed in)
+            <input type="checkbox" checked={!!item.openToPublic} onChange={(e) => update(i, 'openToPublic', e.target.checked)} />
+            Open this for non-users (visible without signing in - leave unchecked to require sign-in)
           </label>
           <button onClick={save} className={saveBtnClass}>
             <Save size={14} /> Save All
@@ -237,7 +237,7 @@ function PromptsAdmin() {
 
   const addNew = () => {
     const next = [
-      { title: 'New Prompt', category: 'General', description: 'Short description.', prompt: 'Prompt text here.', locked: false, membersOnly: false },
+      { title: 'New Prompt', category: 'General', description: 'Short description.', prompt: 'Prompt text here.', locked: false, openToPublic: false },
       ...items,
     ];
     setItems(next);
@@ -276,8 +276,8 @@ function PromptsAdmin() {
               Exclusive (blurred, unlock by requesting access via email)
             </label>
             <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 mb-3">
-              <input type="checkbox" checked={!!item.membersOnly} onChange={(e) => update(i, 'membersOnly', e.target.checked)} />
-              Members only (hidden completely from visitors who aren't signed in)
+              <input type="checkbox" checked={!!item.openToPublic} onChange={(e) => update(i, 'openToPublic', e.target.checked)} />
+              Open this for non-users (visible without signing in - leave unchecked to require sign-in)
             </label>
             <button onClick={save} className={saveBtnClass}>
               <Save size={14} /> Save All

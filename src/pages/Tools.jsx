@@ -19,7 +19,7 @@ export default function Tools() {
   const { isAuthenticated } = useAuth();
   const [activePlatform, setActivePlatform] = useState('All');
   const allTools = getTools();
-  const tools = allTools.filter((t) => !t.membersOnly || isAuthenticated);
+  const tools = allTools.filter((t) => t.openToPublic || isAuthenticated);
   const hiddenCount = allTools.length - tools.length;
   const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
