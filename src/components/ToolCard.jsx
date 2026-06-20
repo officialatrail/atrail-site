@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play } from 'lucide-react';
+import { Play, ArrowUpRight } from 'lucide-react';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
 
@@ -11,6 +11,11 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
   const inner = (
     <>
       <BorderBeam />
+      {!locked && (
+        <span className="absolute top-4 right-4 z-10 inline-flex items-center justify-center w-8 h-8 rounded-full bg-white/90 dark:bg-zinc-800/90 text-zinc-400 dark:text-zinc-500 shadow-sm border border-zinc-100 dark:border-zinc-700 transition-all duration-300 group-hover:bg-brand-600 group-hover:text-white group-hover:border-brand-600 group-hover:scale-110">
+          <ArrowUpRight size={15} />
+        </span>
+      )}
       <div className="relative aspect-video bg-zinc-100 dark:bg-zinc-800 overflow-hidden rounded-xl mb-5">
         <img src={tool.image} alt={tool.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
         {tool.link?.type === 'video' && (
