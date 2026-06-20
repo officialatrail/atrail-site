@@ -97,8 +97,14 @@ export default function Prompts() {
             </p>
           )}
 
-          {filteredPrompts.length === 0 && (
+          {filteredPrompts.length === 0 && search && (
             <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No prompts match "{search}".</p>
+          )}
+
+          {filteredPrompts.length === 0 && !search && prompts.length === 0 && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">
+              {isAuthenticated ? 'No prompts yet - check back soon.' : 'Sign in to view the prompt library.'}
+            </p>
           )}
 
           <div className="space-y-6">
