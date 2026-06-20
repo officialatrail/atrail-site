@@ -6,6 +6,7 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
+import { platformNames } from '../lib/platformIcons';
 import ChartInserter from '../components/ChartInserter';
 import ImageUpload from '../components/ImageUpload';
 import MediaInserter from '../components/MediaInserter';
@@ -170,18 +171,55 @@ function ToolsAdmin() {
 
   const save = () => persist(saveTools, items, 'Tools saved');
 
+  const remove = (index) => {
+    const next = items.filter((_, i) => i !== index);
+    setItems(next);
+    persist(saveTools, next, 'Tool removed');
+  };
+
+  const addNew = () => {
+    const next = [
+      {
+        name: 'New Tool',
+        category: 'General',
+        platform: platformNames[0],
+        description: 'Short description.',
+        image: '',
+        link: { type: 'link', value: '' },
+        openToPublic: false,
+      },
+      ...items,
+    ];
+    setItems(next);
+    persist(saveTools, next, 'Tool added');
+  };
+
   return (
-    <div className="space-y-4">
+    <div>
+      <button onClick={addNew} className={addBtnClass}>
+        <Plus size={14} /> Add Tool
+      </button>
+      <div className="space-y-4">
       {items.map((item, i) => (
-        <div key={item.name} className={cardClass}>
-          <div className="grid grid-cols-2 gap-3">
-            <Field label="Name">
-              <input className={inputClass} value={item.name} onChange={(e) => update(i, 'name', e.target.value)} />
-            </Field>
-            <Field label="Category">
-              <input className={inputClass} value={item.category} onChange={(e) => update(i, 'category', e.target.value)} />
-            </Field>
+        <div key={item.name + i} className={cardClass}>
+          <div className="flex items-start justify-between gap-3">
+            <div className="grid grid-cols-2 gap-3 flex-1">
+              <Field label="Name">
+                <input className={inputClass} value={item.name} onChange={(e) => update(i, 'name', e.target.value)} />
+              </Field>
+              <Field label="Category">
+                <input className={inputClass} value={item.category} onChange={(e) => update(i, 'category', e.target.value)} />
+              </Field>
+            </div>
+            <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete tool">
+              <Trash2 size={16} />
+            </button>
           </div>
+          <Field label="Platform">
+            <select className={inputClass} value={item.platform} onChange={(e) => update(i, 'platform', e.target.value)}>
+              {platformNames.map((p) => <option key={p} value={p}>{p}</option>)}
+            </select>
+          </Field>
           <Field label="Description">
             <textarea className={inputClass} rows={2} value={item.description} onChange={(e) => update(i, 'description', e.target.value)} />
           </Field>
@@ -214,6 +252,7 @@ function ToolsAdmin() {
           </button>
         </div>
       ))}
+      </div>
     </div>
   );
 }
