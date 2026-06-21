@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, LogOut, Trash2, Mail } from 'lucide-react';
+import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
@@ -615,7 +615,7 @@ function WaitlistAdmin() {
   return (
     <div className={cardClass}>
       <p className="text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-        {entries.length} {entries.length === 1 ? 'person' : 'people'} interested.
+        {entries.length} {entries.length === 1 ? 'person' : 'people'} interested. Everyone here gets your update emails (view-only).
       </p>
       {entries.length === 0 ? (
         <p className="text-zinc-400 dark:text-zinc-500 text-sm">No signups yet.</p>
@@ -624,7 +624,12 @@ function WaitlistAdmin() {
           {entries.map((e, i) => (
             <li key={i} className="py-2.5 flex items-center justify-between text-sm">
               <span className="text-zinc-700 dark:text-zinc-300">{e.email}</span>
-              <span className="text-zinc-400 dark:text-zinc-500">{new Date(e.created_at).toLocaleDateString()}</span>
+              <span className="flex items-center gap-3">
+                <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400">
+                  <Check size={13} /> Gets emails
+                </span>
+                <span className="text-zinc-400 dark:text-zinc-500">{new Date(e.created_at).toLocaleDateString()}</span>
+              </span>
             </li>
           ))}
         </ul>
@@ -683,6 +688,9 @@ function ExclusiveAdmin() {
                 <div>
                   <span className="font-rubik text-zinc-700 dark:text-zinc-300">{r.email}</span>
                   <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(r.created_at).toLocaleDateString()}</span>
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400 ml-2">
+                    <Check size={13} /> Gets emails
+                  </span>
                 </div>
                 {isApproved ? (
                   <button onClick={() => revoke(r.email)} className="font-rubik text-xs font-semibold text-red-500 hover:text-red-600">
@@ -747,7 +755,7 @@ function UsersAdmin() {
   return (
     <div className={cardClass}>
       <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-4">
-        {users.length} signed-up {users.length === 1 ? 'user' : 'users'}. Grant exclusive access directly from here.
+        {users.length} signed-up {users.length === 1 ? 'user' : 'users'}. Grant exclusive access directly from here. The "Gets emails" tick is set by each person at sign-up and shown here for reference only - it can't be edited from this page.
       </p>
       {loadError && (
         <p className="font-rubik text-red-500 text-sm mb-3">Error loading users: {loadError}</p>
@@ -767,8 +775,14 @@ function UsersAdmin() {
                 <div>
                   <span className="font-rubik text-zinc-700 dark:text-zinc-300">{u.email}</span>
                   <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(u.created_at).toLocaleDateString()}</span>
-                  {u.subscribed === false && (
-                    <span className="font-rubik text-xs font-semibold text-zinc-400 ml-2">(unsubscribed from emails)</span>
+                  {u.subscribed === false ? (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-zinc-400 dark:text-zinc-500 ml-2" title="Set by the user at sign-up - view only">
+                      <XIcon size={13} /> No emails
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center gap-1 text-xs font-semibold text-brand-600 dark:text-brand-400 ml-2" title="Set by the user at sign-up - view only">
+                      <Check size={13} /> Gets emails
+                    </span>
                   )}
                 </div>
                 {isApproved ? (
