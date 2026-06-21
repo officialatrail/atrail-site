@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, LogOut, Trash2 } from 'lucide-react';
+import { Save, Plus, LogOut, Trash2, Mail } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -23,6 +23,7 @@ import {
   fetchAllUsers,
   getStats, saveStats,
   slugify,
+  sendUpdateEmail,
 } from '../lib/contentStore';
 
 const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users', 'Analytics'];
@@ -85,6 +86,21 @@ function ArticlesAdmin() {
     persist(saveArticles, next, 'Article removed');
   };
 
+  const sendUpdate = async (item) => {
+    if (!window.confirm(`Email the waitlist and exclusive-access list about "${item.title}"?`)) return;
+    try {
+      await sendUpdateEmail({
+        type: 'article',
+        title: item.title,
+        excerpt: item.excerpt,
+        url: `https://officialatrail.online/articles/${item.slug}`,
+      });
+      toast.success('Update email sent');
+    } catch {
+      toast.error('Could not send - check the send-update function is deployed.');
+    }
+  };
+
   const addNew = () => {
     const title = 'New Article Title';
     const next = [
@@ -141,9 +157,14 @@ function ArticlesAdmin() {
                 onChange={(e) => update(i, 'body', e.target.value)}
               />
             </Field>
-            <button onClick={save} className={saveBtnClass}>
-              <Save size={14} /> Save All
-            </button>
+            <div className="flex items-center gap-4">
+              <button onClick={save} className={saveBtnClass}>
+                <Save size={14} /> Save All
+              </button>
+              <button onClick={() => sendUpdate(item)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400">
+                <Mail size={14} /> Email subscribers about this
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -175,6 +196,22 @@ function ToolsAdmin() {
     const next = items.filter((_, i) => i !== index);
     setItems(next);
     persist(saveTools, next, 'Tool removed');
+  };
+
+  const sendUpdate = async (item) => {
+    if (!window.confirm(`Email the waitlist and exclusive-access list about "${item.name}"?`)) return;
+    try {
+      await sendUpdateEmail({
+        type: 'tool',
+        title: item.name,
+        excerpt: item.description,
+        image: item.image,
+        url: 'https://officialatrail.online/tools',
+      });
+      toast.success('Update email sent');
+    } catch {
+      toast.error('Could not send - check the send-update function is deployed.');
+    }
   };
 
   const addNew = () => {
@@ -243,13 +280,21 @@ function ToolsAdmin() {
               )}
             </Field>
           </div>
+          <Field label="Price badge (optional - e.g. $5, leave blank for free)">
+            <input className={inputClass} value={item.price || ''} onChange={(e) => update(i, 'price', e.target.value)} placeholder="e.g. $5" />
+          </Field>
           <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 mb-3 mt-3">
             <input type="checkbox" checked={!!item.openToPublic} onChange={(e) => update(i, 'openToPublic', e.target.checked)} />
-            Open this for non-users (visible without signing in - leave unchecked to require sign-in)
+            Open this for non-users (signed-out visitors can open it directly - leave unchecked to require sign-in when clicked)
           </label>
-          <button onClick={save} className={saveBtnClass}>
-            <Save size={14} /> Save All
-          </button>
+          <div className="flex items-center gap-4">
+            <button onClick={save} className={saveBtnClass}>
+              <Save size={14} /> Save All
+            </button>
+            <button onClick={() => sendUpdate(item)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400">
+              <Mail size={14} /> Email subscribers about this
+            </button>
+          </div>
         </div>
       ))}
       </div>
@@ -316,7 +361,7 @@ function PromptsAdmin() {
             </label>
             <label className="flex items-center gap-2 text-sm text-zinc-700 dark:text-zinc-300 mb-3">
               <input type="checkbox" checked={!!item.openToPublic} onChange={(e) => update(i, 'openToPublic', e.target.checked)} />
-              Open this for non-users (visible without signing in - leave unchecked to require sign-in)
+              Open this for non-users (full prompt visible without signing in - leave unchecked to blur it for signed-out visitors)
             </label>
             <button onClick={save} className={saveBtnClass}>
               <Save size={14} /> Save All

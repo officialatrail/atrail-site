@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle, X } from 'lucide-react';
 import Header from '../components/Header';
@@ -26,9 +25,7 @@ export default function Tools() {
   const { isAuthenticated } = useAuth();
   const [activePlatform, setActivePlatform] = useState('All');
   const [search, setSearch] = useState('');
-  const allTools = getTools();
-  const tools = allTools.filter((t) => t.openToPublic || isAuthenticated);
-  const hiddenCount = allTools.length - tools.length;
+  const tools = getTools();
   const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
   const [sortBy, setSortBy] = useState('recent');
@@ -121,12 +118,6 @@ export default function Tools() {
             sortOptions={SORT_OPTIONS}
           />
 
-          {!isAuthenticated && hiddenCount > 0 && (
-            <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-8">
-              <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link> to see {hiddenCount} more tool{hiddenCount === 1 ? '' : 's'}.
-            </p>
-          )}
-
           {filtered.length === 0 && search && (
             <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No tools match "{search}".</p>
           )}
@@ -142,7 +133,7 @@ export default function Tools() {
                   exit={{ opacity: 0, scale: 0.9 }}
                   whileHover={{ y: -6 }}
                 >
-                  <ToolCard tool={tool} onPlayVideo={setActiveVideo} />
+                  <ToolCard tool={tool} onPlayVideo={setActiveVideo} requiresSignIn={!tool.openToPublic && !isAuthenticated} />
                 </motion.div>
               ))}
             </AnimatePresence>

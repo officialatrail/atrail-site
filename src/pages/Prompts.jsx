@@ -25,9 +25,7 @@ export default function Prompts() {
   );
   const { isAuthenticated } = useAuth();
   const [copiedKey, setCopiedKey] = useState(null);
-  const allPrompts = getPrompts();
-  const prompts = allPrompts.filter((p) => p.openToPublic || isAuthenticated);
-  const hiddenCount = allPrompts.length - prompts.length;
+  const prompts = getPrompts();
   const [unlocked, setUnlocked] = useState(false);
   const [requested, setRequested] = useState(() => !!getMyEmail());
   const [email, setEmail] = useState('');
@@ -110,25 +108,19 @@ export default function Prompts() {
             sortOptions={SORT_OPTIONS}
           />
 
-          {!isAuthenticated && hiddenCount > 0 && (
-            <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-12">
-              <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link> to see {hiddenCount} more prompt{hiddenCount === 1 ? '' : 's'}.
-            </p>
-          )}
-
           {filteredPrompts.length === 0 && search && (
             <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No prompts match "{search}".</p>
           )}
 
-          {filteredPrompts.length === 0 && !search && prompts.length === 0 && (
-            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">
-              {isAuthenticated ? 'No prompts yet - check back soon.' : 'Sign in to view the prompt library.'}
-            </p>
+          {filteredPrompts.length === 0 && !search && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No prompts yet - check back soon.</p>
           )}
 
           <div className="space-y-6">
             {filteredPrompts.map((p, index) => {
-              const isLocked = p.locked && !unlocked;
+              const isExclusiveLocked = p.locked && !unlocked;
+              const isMembersLocked = !p.openToPublic && !isAuthenticated;
+              const isLocked = isExclusiveLocked || isMembersLocked;
               const lines = p.prompt.split('\n');
               const isLong = lines.length > 3;
               const isExpanded = !!expanded[p.title];
@@ -179,38 +171,47 @@ export default function Prompts() {
                           {blurredPreview}
                         </div>
                         <div className="mt-4">
-                          {requested ? (
-                            <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 inline-flex items-center gap-1.5">
-                              <CheckCircle size={14} className="text-brand-600 dark:text-brand-400" />
-                              Request sent for {getMyEmail()}. You'll get access once approved.
-                            </p>
+                          {isExclusiveLocked ? (
+                            requested ? (
+                              <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 inline-flex items-center gap-1.5">
+                                <CheckCircle size={14} className="text-brand-600 dark:text-brand-400" />
+                                Request sent for {getMyEmail()}. You'll get access once approved.
+                              </p>
+                            ) : (
+                              <form onSubmit={handleRequest} className="flex flex-col sm:flex-row gap-2">
+                                <input
+                                  type="text"
+                                  name="company"
+                                  value={honeypot}
+                                  onChange={(e) => setHoneypot(e.target.value)}
+                                  tabIndex={-1}
+                                  autoComplete="off"
+                                  className="absolute -left-[9999px] w-px h-px opacity-0"
+                                  aria-hidden="true"
+                                />
+                                <input
+                                  type="email"
+                                  required
+                                  value={email}
+                                  onChange={(e) => setEmail(e.target.value)}
+                                  placeholder="Enter your email to request access"
+                                  className="font-rubik px-4 py-2.5 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 flex-1"
+                                />
+                                <button
+                                  type="submit"
+                                  className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all duration-200 w-fit"
+                                >
+                                  Request Access
+                                </button>
+                              </form>
+                            )
                           ) : (
-                            <form onSubmit={handleRequest} className="flex flex-col sm:flex-row gap-2">
-                              <input
-                                type="text"
-                                name="company"
-                                value={honeypot}
-                                onChange={(e) => setHoneypot(e.target.value)}
-                                tabIndex={-1}
-                                autoComplete="off"
-                                className="absolute -left-[9999px] w-px h-px opacity-0"
-                                aria-hidden="true"
-                              />
-                              <input
-                                type="email"
-                                required
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
-                                placeholder="Enter your email to request access"
-                                className="font-rubik px-4 py-2.5 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 flex-1"
-                              />
-                              <button
-                                type="submit"
-                                className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all duration-200 w-fit"
-                              >
-                                Request Access
-                              </button>
-                            </form>
+                            <Link
+                              to="/login"
+                              className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all duration-200 w-fit"
+                            >
+                              Sign in to view this prompt
+                            </Link>
                           )}
                         </div>
                       </>
