@@ -705,9 +705,17 @@ function ExclusiveAdmin() {
 function UsersAdmin() {
   const [users, setUsers] = useState(null);
   const [approved, setApproved] = useState([]);
+  const [loadError, setLoadError] = useState(null);
 
   const reload = () => {
-    fetchAllUsers().then(setUsers).catch(() => setUsers([]));
+    setLoadError(null);
+    fetchAllUsers()
+      .then(setUsers)
+      .catch((err) => {
+        console.error('fetchAllUsers failed:', err);
+        setLoadError(err?.message || String(err));
+        setUsers([]);
+      });
     fetchApprovedEmails().then(setApproved).catch(() => setApproved([]));
   };
 
@@ -741,9 +749,14 @@ function UsersAdmin() {
       <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-4">
         {users.length} signed-up {users.length === 1 ? 'user' : 'users'}. Grant exclusive access directly from here.
       </p>
+      {loadError && (
+        <p className="font-rubik text-red-500 text-sm mb-3">Error loading users: {loadError}</p>
+      )}
       {users.length === 0 ? (
         <p className="font-rubik text-zinc-400 dark:text-zinc-500 text-sm">
-          No users found yet - if you already have signups, make sure the <code>profiles</code> table setup has been run in Supabase.
+          {loadError
+            ? 'Could not load users - see the error above.'
+            : 'No users found yet - if you already have signups, make sure the profiles table setup has been run in Supabase.'}
         </p>
       ) : (
         <ul className="divide-y divide-slate-100 dark:divide-zinc-800">
