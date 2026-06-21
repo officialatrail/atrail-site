@@ -13,7 +13,7 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
     <>
       <BorderBeam />
       {requiresSignIn && (
-        <span className="absolute top-4 right-4 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/90 dark:bg-zinc-800/90 text-zinc-400 dark:text-zinc-500 shadow-sm">
+        <span className="absolute top-4 right-4 z-10 inline-flex items-center justify-center w-7 h-7 rounded-full bg-white/90 dark:bg-zinc-800/90 text-zinc-400 dark:text-zinc-500 shadow-sm transition-colors duration-200 group-hover:bg-blue-100 group-hover:text-blue-500 dark:group-hover:bg-blue-900/40 dark:group-hover:text-blue-400">
           <Lock size={13} />
         </span>
       )}
@@ -22,7 +22,7 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
         {tool.link?.type === 'video' && !requiresSignIn && (
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-              <Play className="w-5 h-5 text-brand-600 ml-0.5" fill="currentColor" />
+              <Play className="w-5 h-5 text-brand-400 ml-0.5" fill="currentColor" />
             </div>
           </div>
         )}
@@ -62,12 +62,14 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
 
   const className = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-[0_4px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.06)] dark:hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] transition-all duration-150 border-2 border-slate-200 dark:border-zinc-700 hover:border-brand-300 dark:hover:border-brand-700 -translate-y-0.5 hover:translate-y-0 active:translate-y-0.5 active:shadow-none cursor-pointer";
 
+  const signInClassName = "card-rich group relative block bg-white dark:bg-zinc-900 rounded-2xl p-6 shadow-[0_4px_0_0_rgba(0,0,0,0.06)] dark:shadow-[0_4px_0_0_rgba(0,0,0,0.4)] hover:shadow-[0_2px_0_0_rgba(0,0,0,0.06)] dark:hover:shadow-[0_2px_0_0_rgba(0,0,0,0.4)] transition-all duration-150 border-2 border-slate-200 dark:border-zinc-700 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/50 dark:hover:bg-blue-950/20 -translate-y-0.5 hover:translate-y-0 active:translate-y-0.5 active:shadow-none cursor-pointer";
+
   if (locked) {
     return <div className={lockedClassName}>{inner}</div>;
   }
 
   if (requiresSignIn) {
-    return <Link to="/login" className={className}>{inner}</Link>;
+    return <Link to="/login" className={signInClassName}>{inner}</Link>;
   }
 
   if (tool.link?.type === 'article') {

@@ -754,6 +754,9 @@ function UsersAdmin() {
                 <div>
                   <span className="font-rubik text-zinc-700 dark:text-zinc-300">{u.email}</span>
                   <span className="font-rubik text-zinc-400 dark:text-zinc-500 ml-2">{new Date(u.created_at).toLocaleDateString()}</span>
+                  {u.subscribed === false && (
+                    <span className="font-rubik text-xs font-semibold text-zinc-400 ml-2">(unsubscribed from emails)</span>
+                  )}
                 </div>
                 {isApproved ? (
                   <button onClick={() => revoke(u.email)} className="font-rubik text-xs font-semibold text-red-500 hover:text-red-600">

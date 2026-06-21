@@ -10,6 +10,7 @@ import PasswordInput from '../components/PasswordInput';
 export default function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [emailUpdates, setEmailUpdates] = useState(true);
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const [done, setDone] = useState(false);
@@ -26,7 +27,7 @@ export default function SignUp() {
     }
     setSubmitting(true);
     setError('');
-    const errorMessage = await signUp(email, password);
+    const errorMessage = await signUp(email, password, { subscribed: emailUpdates });
     setSubmitting(false);
     if (!errorMessage) {
       setDone(true);
@@ -86,6 +87,10 @@ export default function SignUp() {
                   <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Password</label>
                   <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
                 </div>
+                <label className="flex items-center gap-2 text-sm text-zinc-600 dark:text-zinc-400">
+                  <input type="checkbox" checked={emailUpdates} onChange={(e) => setEmailUpdates(e.target.checked)} />
+                  Email me about new tools, articles, and prompts
+                </label>
                 {error && <p className="text-red-500 text-sm">{error}</p>}
 
                 <motion.button

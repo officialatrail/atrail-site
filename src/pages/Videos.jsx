@@ -55,7 +55,7 @@ function VideoCard({ video, index, onOpen }) {
         {!preview && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-              <Play className="w-6 h-6 text-white ml-0.5" fill="white" />
+              <Play className="w-6 h-6 text-brand-300 ml-0.5" fill="currentColor" />
             </div>
           </div>
         )}

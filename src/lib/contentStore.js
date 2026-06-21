@@ -171,7 +171,7 @@ export async function fetchExclusiveRequests() {
 // Triggers the `send-update` Supabase Edge Function, which holds the Resend
 // API key server-side and emails the waitlist + exclusive-access list. Admin-
 // only: the function itself re-checks the caller's session server-side.
-export async function sendUpdateEmail({ type, title, excerpt, image, url }) {
+export async function sendUpdateEmail({ type, title, excerpt, image, url } = {}) {
   const { data, error } = await supabase.functions.invoke('send-update', {
     body: { type, title, excerpt, image, url },
   });
@@ -182,7 +182,7 @@ export async function sendUpdateEmail({ type, title, excerpt, image, url }) {
 export async function fetchAllUsers() {
   const { data, error } = await supabase
     .from('profiles')
-    .select('email, created_at')
+    .select('email, created_at, subscribed')
     .order('created_at', { ascending: false });
   if (error) throw error;
   return data;

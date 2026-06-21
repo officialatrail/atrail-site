@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Copy, Check, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Check, CheckCircle, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
@@ -129,7 +129,11 @@ export default function Prompts() {
               return (
                 <motion.div
                   key={p.title}
-                  className="bg-white dark:bg-zinc-900 rounded-2xl border border-slate-100 dark:border-zinc-800 shadow-lg overflow-hidden"
+                  className={`group bg-white dark:bg-zinc-900 rounded-2xl border shadow-lg overflow-hidden transition-colors duration-200 ${
+                    isLocked
+                      ? 'border-slate-100 dark:border-zinc-800 hover:border-blue-300 dark:hover:border-blue-700 hover:bg-blue-50/40 dark:hover:bg-blue-950/10'
+                      : 'border-slate-100 dark:border-zinc-800'
+                  }`}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
@@ -208,9 +212,9 @@ export default function Prompts() {
                           ) : (
                             <Link
                               to="/login"
-                              className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-5 py-2.5 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all duration-200 w-fit"
+                              className="inline-flex items-center justify-center gap-2 bg-zinc-800 dark:bg-zinc-700 text-white px-5 py-2.5 rounded-full font-semibold text-sm group-hover:bg-blue-600 transition-colors duration-200 w-fit"
                             >
-                              Sign in to view this prompt
+                              <Lock size={13} /> Sign in to view this prompt
                             </Link>
                           )}
                         </div>
