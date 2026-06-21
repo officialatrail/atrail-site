@@ -126,9 +126,10 @@ export default function Prompts() {
             {filteredPrompts.map((p, index) => {
               const isLocked = p.locked && !unlocked;
               const lines = p.prompt.split('\n');
-              const isLong = lines.length > 8;
+              const isLong = lines.length > 3;
               const isExpanded = !!expanded[p.title];
-              const displayPrompt = isLong && !isExpanded ? lines.slice(0, 8).join('\n') + '\n...' : p.prompt;
+              const displayPrompt = isLong && !isExpanded ? lines.slice(0, 3).join('\n') + '\n...' : p.prompt;
+              const blurredPreview = lines.slice(0, 3).join('\n') + (lines.length > 3 ? '\n...' : '');
               return (
                 <motion.div
                   key={p.title}
@@ -170,8 +171,8 @@ export default function Prompts() {
 
                     {isLocked ? (
                       <>
-                        <div className="bg-zinc-900 dark:bg-white rounded-xl p-5 text-sm font-mono text-zinc-500 dark:text-zinc-400 filter blur-[4px] select-none pointer-events-none">
-                          {p.prompt}
+                        <div className="bg-zinc-900 dark:bg-white rounded-xl p-5 text-sm font-mono text-zinc-500 dark:text-zinc-400 filter blur-[4px] select-none pointer-events-none whitespace-pre-wrap">
+                          {blurredPreview}
                         </div>
                         <div className="mt-4">
                           {requested ? (
