@@ -1,15 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Copy, Check, CheckCircle, Search, ChevronDown, ChevronUp, ArrowDownUp } from 'lucide-react';
+import { Copy, Check, CheckCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
+import SearchSortBar from '../components/SearchSortBar';
 import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getLikeCount } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
+
+const SORT_OPTIONS = [
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'liked', label: 'Most Liked' },
+  { value: 'az', label: 'A - Z' },
+];
 
 export default function Prompts() {
   useDocumentHead(
@@ -26,7 +33,7 @@ export default function Prompts() {
   const [email, setEmail] = useState('');
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState({});
-  const [sortBy, setSortBy] = useState('liked');
+  const [sortBy, setSortBy] = useState('recent');
 
   useEffect(() => {
     isMyEmailApproved().then(setUnlocked);
@@ -90,31 +97,14 @@ export default function Prompts() {
             </p>
           </motion.div>
 
-          <div className="relative max-w-xl mx-auto mb-12">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search prompts..."
-              className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
-          </div>
-
-          <div className="flex justify-center mb-8">
-            <div className="relative inline-flex items-center">
-              <ArrowDownUp className="absolute left-3 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none"
-              >
-                <option value="liked">Most Liked</option>
-                <option value="recent">Most Recent</option>
-                <option value="az">A - Z</option>
-              </select>
-            </div>
-          </div>
+          <SearchSortBar
+            search={search}
+            onSearchChange={setSearch}
+            placeholder="Search prompts..."
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOptions={SORT_OPTIONS}
+          />
 
           {!isAuthenticated && hiddenCount > 0 && (
             <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-12">

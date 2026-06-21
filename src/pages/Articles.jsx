@@ -1,13 +1,20 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Search, Eye } from 'lucide-react';
+import { ArrowRight, Eye } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
-import { getArticles, getReadCount } from '../lib/contentStore';
+import SearchSortBar from '../components/SearchSortBar';
+import { getArticles, getReadCount, getLikeCount } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
+
+const SORT_OPTIONS = [
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'liked', label: 'Most Liked' },
+  { value: 'az', label: 'A - Z' },
+];
 
 export default function Articles() {
   useDocumentHead(
@@ -16,10 +23,22 @@ export default function Articles() {
   );
   const articles = getArticles();
   const [search, setSearch] = useState('');
-  const filteredArticles = articles.filter((a) => {
-    const q = search.toLowerCase();
-    return a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.category.toLowerCase().includes(q);
-  });
+  const [sortBy, setSortBy] = useState('recent');
+  const filteredArticles = articles
+    .filter((a) => {
+      const q = search.toLowerCase();
+      return a.title.toLowerCase().includes(q) || a.excerpt.toLowerCase().includes(q) || a.category.toLowerCase().includes(q);
+    })
+    .map((a, idx) => ({ a, idx }))
+    .sort((x, y) => {
+      if (sortBy === 'az') return x.a.title.localeCompare(y.a.title);
+      if (sortBy === 'liked') {
+        const diff = getLikeCount(`article-${y.a.slug}`) - getLikeCount(`article-${x.a.slug}`);
+        return diff !== 0 ? diff : x.idx - y.idx;
+      }
+      return x.idx - y.idx;
+    })
+    .map(({ a }) => a);
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -40,16 +59,14 @@ export default function Articles() {
             </p>
           </motion.div>
 
-          <div className="relative max-w-xl mx-auto mb-12">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-400" />
-            <input
-              type="text"
-              value={search}
-              onChange={(e) => setSearch(e.target.value)}
-              placeholder="Search articles..."
-              className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
-            />
-          </div>
+          <SearchSortBar
+            search={search}
+            onSearchChange={setSearch}
+            placeholder="Search articles..."
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOptions={SORT_OPTIONS}
+          />
 
           {filteredArticles.length === 0 && (
             <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No articles match "{search}".</p>

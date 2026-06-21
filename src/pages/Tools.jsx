@@ -1,15 +1,22 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle, X, ArrowDownUp } from 'lucide-react';
+import { ArrowRight, CheckCircle, X } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ToolCard from '../components/ToolCard';
+import SearchSortBar from '../components/SearchSortBar';
 import { getTools, getComingSoon, joinWaitlist, getLikeCount } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
+
+const SORT_OPTIONS = [
+  { value: 'recent', label: 'Most Recent' },
+  { value: 'liked', label: 'Most Liked' },
+  { value: 'az', label: 'A - Z' },
+];
 
 export default function Tools() {
   useDocumentHead(
@@ -18,14 +25,19 @@ export default function Tools() {
   );
   const { isAuthenticated } = useAuth();
   const [activePlatform, setActivePlatform] = useState('All');
+  const [search, setSearch] = useState('');
   const allTools = getTools();
   const tools = allTools.filter((t) => t.openToPublic || isAuthenticated);
   const hiddenCount = allTools.length - tools.length;
   const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
-  const [sortBy, setSortBy] = useState('liked');
+  const [sortBy, setSortBy] = useState('recent');
   const filtered = tools
     .filter((t) => activePlatform === 'All' || t.platform === activePlatform)
+    .filter((t) => {
+      const q = search.toLowerCase();
+      return t.name.toLowerCase().includes(q) || t.description.toLowerCase().includes(q) || t.category.toLowerCase().includes(q);
+    })
     .map((t, idx) => ({ t, idx }))
     .sort((a, b) => {
       if (sortBy === 'recent') return a.idx - b.idx;
@@ -96,25 +108,23 @@ export default function Tools() {
             ))}
           </motion.div>
 
-          <div className="flex justify-center mb-8">
-            <div className="relative inline-flex items-center">
-              <ArrowDownUp className="absolute left-3 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="pl-9 pr-4 py-2 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none"
-              >
-                <option value="liked">Most Liked</option>
-                <option value="recent">Most Recent</option>
-                <option value="az">A - Z</option>
-              </select>
-            </div>
-          </div>
+          <SearchSortBar
+            search={search}
+            onSearchChange={setSearch}
+            placeholder="Search tools..."
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            sortOptions={SORT_OPTIONS}
+          />
 
           {!isAuthenticated && hiddenCount > 0 && (
             <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-8">
               <Link to="/login" className="font-semibold text-brand-600 dark:text-brand-400 hover:underline">Sign in</Link> to see {hiddenCount} more tool{hiddenCount === 1 ? '' : 's'}.
             </p>
+          )}
+
+          {filtered.length === 0 && search && (
+            <p className="text-center text-zinc-400 dark:text-zinc-500 mb-12">No tools match "{search}".</p>
           )}
 
           <motion.div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6" layout>
