@@ -4,11 +4,26 @@
 
 html, body {
   font-family: 'Rubik', system-ui, sans-serif;
+  background-color: #ffffff;
+  overflow-x: hidden;
+}
+
+html.dark, html.dark body {
+  background-color: #09090b;
 }
 
 html {
   scroll-behavior: smooth;
   font-size: 110%;
+  max-width: 100%;
+}
+
+body {
+  max-width: 100%;
+}
+
+#root {
+  overflow-x: hidden;
 }
 
 /* Branded text selection */
