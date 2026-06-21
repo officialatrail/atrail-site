@@ -87,13 +87,18 @@ function ArticlesAdmin() {
   const sendUpdate = async (item) => {
     if (!window.confirm(`Email the waitlist and exclusive-access list about "${item.title}"?`)) return;
     try {
-      await sendUpdateEmail({
+      const result = await sendUpdateEmail({
         type: 'article',
         title: item.title,
         excerpt: item.excerpt,
         url: `https://officialatrail.online/articles/${item.slug}`,
       });
-      toast.success('Update email sent');
+      if (result?.sent > 0) {
+        toast.success(`Sent to ${result.sent} of ${result.total} subscribers`);
+      } else {
+        console.error('send-update returned 0 sent:', result);
+        toast.error(result?.error || result?.message || 'Resend did not deliver - check the function logs.');
+      }
     } catch (err) {
       console.error('send-update failed:', err);
       toast.error(err?.message || 'Could not send - see browser console for details.');
@@ -200,14 +205,19 @@ function ToolsAdmin() {
   const sendUpdate = async (item) => {
     if (!window.confirm(`Email the waitlist and exclusive-access list about "${item.name}"?`)) return;
     try {
-      await sendUpdateEmail({
+      const result = await sendUpdateEmail({
         type: 'tool',
         title: item.name,
         excerpt: item.description,
         image: item.image,
         url: 'https://officialatrail.online/tools',
       });
-      toast.success('Update email sent');
+      if (result?.sent > 0) {
+        toast.success(`Sent to ${result.sent} of ${result.total} subscribers`);
+      } else {
+        console.error('send-update returned 0 sent:', result);
+        toast.error(result?.error || result?.message || 'Resend did not deliver - check the function logs.');
+      }
     } catch (err) {
       console.error('send-update failed:', err);
       toast.error(err?.message || 'Could not send - see browser console for details.');
