@@ -34,6 +34,7 @@ export default function Prompts() {
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState({});
   const [sortBy, setSortBy] = useState('recent');
+  const [honeypot, setHoneypot] = useState('');
 
   useEffect(() => {
     isMyEmailApproved().then(setUnlocked);
@@ -68,7 +69,7 @@ export default function Prompts() {
 
   const handleRequest = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || honeypot) return;
     try {
       await requestExclusiveAccess(email);
       setRequested(true);
@@ -94,6 +95,9 @@ export default function Prompts() {
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-2xl mx-auto">
               AI prompts for workflow automation. Copy, paste, adapt.
+            </p>
+            <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-4">
+              Always review outputs before relying on them for real financial decisions.
             </p>
           </motion.div>
 
@@ -182,6 +186,16 @@ export default function Prompts() {
                             </p>
                           ) : (
                             <form onSubmit={handleRequest} className="flex flex-col sm:flex-row gap-2">
+                              <input
+                                type="text"
+                                name="company"
+                                value={honeypot}
+                                onChange={(e) => setHoneypot(e.target.value)}
+                                tabIndex={-1}
+                                autoComplete="off"
+                                className="absolute -left-[9999px] w-px h-px opacity-0"
+                                aria-hidden="true"
+                              />
                               <input
                                 type="email"
                                 required

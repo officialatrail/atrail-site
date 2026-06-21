@@ -50,10 +50,11 @@ export default function Tools() {
 
   const [email, setEmail] = useState('');
   const [joined, setJoined] = useState(false);
+  const [honeypot, setHoneypot] = useState('');
 
   const handleJoin = async (e) => {
     e.preventDefault();
-    if (!email) return;
+    if (!email || honeypot) return;
     try {
       await joinWaitlist(email);
       setJoined(true);
@@ -79,6 +80,9 @@ export default function Tools() {
             </h1>
             <p className="font-rubik text-xl text-zinc-600 dark:text-zinc-400 max-w-3xl mx-auto">
               Automation tools built on familiar tools like Excel, Google Sheets, and more.
+            </p>
+            <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-4">
+              Test in a copy of your file before using these on production data.
             </p>
           </motion.div>
 
@@ -175,6 +179,16 @@ export default function Tools() {
                   </div>
                 ) : (
                   <form onSubmit={handleJoin} className="mt-2 flex flex-col sm:flex-row gap-2">
+                    <input
+                      type="text"
+                      name="company"
+                      value={honeypot}
+                      onChange={(e) => setHoneypot(e.target.value)}
+                      tabIndex={-1}
+                      autoComplete="off"
+                      className="absolute -left-[9999px] w-px h-px opacity-0"
+                      aria-hidden="true"
+                    />
                     <input
                       type="email"
                       required

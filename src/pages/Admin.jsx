@@ -25,7 +25,7 @@ import {
   slugify,
 } from '../lib/contentStore';
 
-const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users'];
+const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users', 'Analytics'];
 
 function Field({ label, children }) {
   return (
@@ -728,6 +728,32 @@ function UsersAdmin() {
   );
 }
 
+function AnalyticsAdmin() {
+  return (
+    <div className={cardClass}>
+      <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-1">
+        Atrail uses Google Analytics (GA4) to track site traffic. Full reports - traffic sources, top pages, devices,
+        realtime visitors - live on Google's own dashboard, not here.
+      </p>
+      <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mb-5">
+        Property: Atrail · Measurement ID: G-FKWR6FGCZL
+      </p>
+      <a
+        href="https://analytics.google.com/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className={saveBtnClass}
+      >
+        Open Google Analytics ↗
+      </a>
+      <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-4">
+        New data can take up to 48 hours to start appearing after setup. Sign in with the Google account you used to
+        create the property.
+      </p>
+    </div>
+  );
+}
+
 export default function Admin() {
   const [tab, setTab] = useState('Articles');
   const { logout } = useAuth();
@@ -772,6 +798,7 @@ export default function Admin() {
             {tab === 'Waitlist' && <WaitlistAdmin />}
             {tab === 'Exclusive Access' && <ExclusiveAdmin />}
             {tab === 'Users' && <UsersAdmin />}
+            {tab === 'Analytics' && <AnalyticsAdmin />}
           </motion.div>
         </div>
       </main>

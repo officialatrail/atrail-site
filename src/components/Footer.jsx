@@ -14,6 +14,8 @@ const Footer = () => {
     Community: [
       { name: 'About', href: '/about' },
       { name: 'Contact', href: 'mailto:officialatrail@gmail.com' },
+      { name: 'Privacy Policy', href: '/privacy' },
+      { name: 'Terms of Service', href: '/terms' },
     ],
   };
 

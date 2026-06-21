@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft, Eye } from 'lucide-react';
+import { ArrowLeft, Eye, Twitter, Linkedin, Link2 } from 'lucide-react';
+import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import NotFound from './NotFound';
@@ -9,7 +10,7 @@ import ArticleRenderer from '../components/ArticleRenderer';
 import LikeButton from '../components/LikeButton';
 import CommentSection from '../components/CommentSection';
 import { getArticles, getReadCount, recordRead } from '../lib/contentStore';
-import useDocumentHead from '../lib/useDocumentHead';
+import useDocumentHead, { useArticleSchema } from '../lib/useDocumentHead';
 
 export default function ArticleDetail() {
   const { slug } = useParams();
@@ -21,6 +22,7 @@ export default function ArticleDetail() {
     article ? `${article.title} | Atrail` : undefined,
     article ? article.excerpt : undefined
   );
+  useArticleSchema(article || null);
 
   useEffect(() => {
     if (!article) return;
@@ -58,8 +60,39 @@ export default function ArticleDetail() {
               {article.title}
             </h1>
 
-            <div className="mb-10">
+            <div className="flex items-center gap-4 mb-10">
               <LikeButton itemKey={`article-${article.slug}`} />
+              <span className="w-px h-4 bg-zinc-200 dark:bg-zinc-700" />
+              <div className="flex items-center gap-3">
+                <a
+                  href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(article.title)}&url=${encodeURIComponent(`https://officialatrail.online/articles/${article.slug}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on X"
+                  className="text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                >
+                  <Twitter size={16} />
+                </a>
+                <a
+                  href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(`https://officialatrail.online/articles/${article.slug}`)}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Share on LinkedIn"
+                  className="text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                >
+                  <Linkedin size={16} />
+                </a>
+                <button
+                  onClick={() => {
+                    navigator.clipboard.writeText(`https://officialatrail.online/articles/${article.slug}`);
+                    toast.success('Link copied');
+                  }}
+                  aria-label="Copy link"
+                  className="text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+                >
+                  <Link2 size={16} />
+                </button>
+              </div>
             </div>
 
             <ArticleRenderer body={article.body} />

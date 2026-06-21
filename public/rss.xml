@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Atrail Articles</title>
+    <link>https://officialatrail.online/articles</link>
+    <description>Written walkthroughs on finance and accounting automation from Atrail.</description>
+    <language>en</language>
+
+    <item>
+      <title>How to Automate Bank Reconciliation with n8n and Claude</title>
+      <link>https://officialatrail.online/articles/automate-bank-reconciliation-n8n-claude</link>
+      <guid>https://officialatrail.online/articles/automate-bank-reconciliation-n8n-claude</guid>
+      <pubDate>Thu, 02 Apr 2026 00:00:00 GMT</pubDate>
+      <description>A step-by-step walkthrough for building a fully automated reconciliation workflow that matches transactions, flags exceptions, and generates a summary report.</description>
+    </item>
+
+    <item>
+      <title>Building Financial Models Faster with Claude and Excel</title>
+      <link>https://officialatrail.online/articles/financial-modelling-claude-excel</link>
+      <guid>https://officialatrail.online/articles/financial-modelling-claude-excel</guid>
+      <pubDate>Wed, 18 Mar 2026 00:00:00 GMT</pubDate>
+      <description>Pairing Claude with Excel does not replace financial modelling judgment, but it removes most of the mechanical setup work. Here is the workflow that holds up under review.</description>
+    </item>
+
+    <item>
+      <title>Prepayment Schedules Without the Manual Spreadsheet Work</title>
+      <link>https://officialatrail.online/articles/prepayment-schedules-without-the-manual-work</link>
+      <guid>https://officialatrail.online/articles/prepayment-schedules-without-the-manual-work</guid>
+      <pubDate>Fri, 27 Feb 2026 00:00:00 GMT</pubDate>
+      <description>Building amortization schedules by hand is error-prone and slow. A short template plus one formula pattern handles almost every prepayment case.</description>
+    </item>
+
+    <item>
+      <title>Claude vs ChatGPT vs Gemini for Finance Work: What Actually Matters</title>
+      <link>https://officialatrail.online/articles/choosing-the-right-ai-tool-for-finance-work</link>
+      <guid>https://officialatrail.online/articles/choosing-the-right-ai-tool-for-finance-work</guid>
+      <pubDate>Mon, 09 Feb 2026 00:00:00 GMT</pubDate>
+      <description>The "which AI tool is best" question depends entirely on the task. Here is how to think about it for the finance and accounting workflows that actually come up.</description>
+    </item>
+  </channel>
+</rss>

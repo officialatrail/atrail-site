@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
@@ -8,6 +8,7 @@ import { AuthProvider } from './src/context/AuthContext.jsx';
 import { ThemeProvider } from './src/context/ThemeContext.jsx';
 import ProtectedRoute from './src/components/ProtectedRoute.jsx';
 import ScrollProgress from './src/components/ScrollProgress.jsx';
+import ErrorBoundary from './src/components/ErrorBoundary.jsx';
 
 import Home from './src/pages/Home.jsx';
 import Tools from './src/pages/Tools.jsx';
@@ -21,10 +22,23 @@ import SignUp from './src/pages/SignUp.jsx';
 import ForgotPassword from './src/pages/ForgotPassword.jsx';
 import ResetPassword from './src/pages/ResetPassword.jsx';
 import Admin from './src/pages/Admin.jsx';
+import PrivacyPolicy from './src/pages/PrivacyPolicy.jsx';
+import TermsOfService from './src/pages/TermsOfService.jsx';
 import NotFound from './src/pages/NotFound.jsx';
 
 function AnimatedRoutes() {
   const location = useLocation();
+
+  useEffect(() => {
+    if (typeof window.gtag === 'function') {
+      window.gtag('event', 'page_view', {
+        page_path: location.pathname + location.search,
+        page_location: window.location.href,
+        page_title: document.title,
+      });
+    }
+  }, [location.pathname, location.search]);
+
   return (
     <AnimatePresence mode="wait">
       <div key={location.pathname} className="page-enter">
@@ -44,6 +58,8 @@ function AnimatedRoutes() {
           <Route path="/articles/:slug" element={<ArticleDetail />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/about" element={<About />} />
+          <Route path="/privacy" element={<PrivacyPolicy />} />
+          <Route path="/terms" element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </div>
@@ -53,23 +69,25 @@ function AnimatedRoutes() {
 
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <Router basename={import.meta.env.BASE_URL}>
-          <ScrollProgress />
-          <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
-            <AnimatedRoutes />
-            <ToastContainer
-              position="top-right"
-              autoClose={3000}
-              newestOnTop
-              closeOnClick
-              pauseOnHover
-              theme="light"
-            />
-          </main>
-        </Router>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <Router basename={import.meta.env.BASE_URL}>
+            <ScrollProgress />
+            <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
+              <AnimatedRoutes />
+              <ToastContainer
+                position="top-right"
+                autoClose={3000}
+                newestOnTop
+                closeOnClick
+                pauseOnHover
+                theme="light"
+              />
+            </main>
+          </Router>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }

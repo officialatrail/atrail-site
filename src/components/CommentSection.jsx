@@ -86,7 +86,7 @@ function AliasModal({ onSaved, onCancel }) {
 }
 
 export default function CommentSection({ articleSlug }) {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isAdmin } = useAuth();
   const [comments, setComments] = useState([]);
   const [loading, setLoading] = useState(true);
   const [body, setBody] = useState('');
@@ -240,7 +240,7 @@ export default function CommentSection({ articleSlug }) {
                       <span className="text-xs text-zinc-400">(formerly @{c.alias_at_post})</span>
                     )}
                     <span className="text-xs text-zinc-400">· {timeAgo(c.created_at)}</span>
-                    {isMine && (
+                    {(isMine || isAdmin) && (
                       <button onClick={() => handleDelete(c.id)} className="ml-auto text-zinc-400 hover:text-red-500" aria-label="Delete comment">
                         <X size={14} />
                       </button>
