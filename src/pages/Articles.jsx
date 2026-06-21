@@ -2,8 +2,6 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight, Eye } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import SearchSortBar from '../components/SearchSortBar';
 import { getArticles, getReadCount, getLikeCount } from '../lib/contentStore';
@@ -42,7 +40,6 @@ export default function Articles() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -108,7 +105,6 @@ export default function Articles() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

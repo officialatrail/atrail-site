@@ -1,7 +1,5 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 
@@ -17,7 +15,6 @@ export default function PrivacyPolicy() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -124,7 +121,6 @@ export default function PrivacyPolicy() {
           </motion.div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

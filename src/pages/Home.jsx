@@ -1,11 +1,9 @@
 import React from 'react';
-import Header from '../components/Header';
 import Hero from '../components/Hero';
 import Features from '../components/Features';
 import Stats from '../components/Stats';
 import Portfolio from '../components/Portfolio';
 import Testimonials from '../components/Testimonials';
-import Footer from '../components/Footer';
 import useDocumentHead from '../lib/useDocumentHead';
 
 export default function Home() {
@@ -16,7 +14,6 @@ export default function Home() {
 
   return (
     <div className="min-h-screen">
-      <Header />
       <main>
         <Hero />
         <Features />
@@ -24,7 +21,6 @@ export default function Home() {
         <Portfolio />
         <Testimonials />
       </main>
-      <Footer />
     </div>
   );
 }

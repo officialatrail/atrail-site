@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Copy, Check, CheckCircle, ChevronDown, ChevronUp, Lock } from 'lucide-react';
 import { toast } from 'react-toastify';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
 import SearchSortBar from '../components/SearchSortBar';
 import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getLikeCount } from '../lib/contentStore';
@@ -79,7 +77,6 @@ export default function Prompts() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -249,7 +246,6 @@ export default function Prompts() {
           </div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }

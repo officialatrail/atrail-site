@@ -1,8 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Play, X } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import SearchSortBar from '../components/SearchSortBar';
 import { getVideos } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
@@ -55,13 +53,13 @@ function VideoCard({ video, index, onOpen }) {
         {!preview && (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="w-14 h-14 rounded-full bg-black/50 backdrop-blur-sm flex items-center justify-center transition-transform duration-300 group-hover:scale-110">
-              <Play className="w-6 h-6 text-brand-300 ml-0.5" fill="currentColor" />
+              <Play className="w-6 h-6 text-brand-200/80 ml-0.5" fill="currentColor" />
             </div>
           </div>
         )}
       </div>
-      <div className="p-4">
-        <h3 className="font-bold text-zinc-900 dark:text-white text-sm leading-snug line-clamp-2">{video.title}</h3>
+      <div className="px-3 py-2.5">
+        <h3 className="font-bold text-zinc-900 dark:text-white text-xs leading-snug line-clamp-1">{video.title}</h3>
       </div>
     </motion.button>
   );
@@ -87,7 +85,6 @@ export default function Videos() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -156,7 +153,6 @@ export default function Videos() {
         </motion.div>
       )}
 
-      <Footer />
     </div>
   );
 }

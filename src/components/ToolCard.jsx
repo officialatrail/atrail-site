@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Play, Lock } from 'lucide-react';
+import { Play, Lock, ArrowRight } from 'lucide-react';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
 import LikeButton from './LikeButton';
@@ -22,7 +22,7 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
         {tool.link?.type === 'video' && !requiresSignIn && (
           <div className="absolute inset-0 bg-black/30 flex items-center justify-center">
             <div className="w-12 h-12 rounded-full bg-white/90 flex items-center justify-center">
-              <Play className="w-5 h-5 text-brand-400 ml-0.5" fill="currentColor" />
+              <Play className="w-5 h-5 text-brand-600 ml-0.5" fill="currentColor" />
             </div>
           </div>
         )}
@@ -51,8 +51,21 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
         <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{tool.description}</p>
       )}
       {!locked && (
-        <div className="mt-4 relative z-10">
+        <div className="mt-4 relative z-10 flex items-center justify-between">
           <LikeButton itemKey={`tool-${tool.name}`} />
+          <span
+            className={`inline-flex items-center gap-1 text-xs font-bold px-3.5 py-1.5 rounded-full transition-colors duration-200 ${
+              requiresSignIn
+                ? 'bg-zinc-800 dark:bg-zinc-700 text-white group-hover:bg-blue-600'
+                : 'bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 group-hover:bg-brand-600 dark:group-hover:bg-brand-500 dark:group-hover:text-white'
+            }`}
+          >
+            {requiresSignIn ? (
+              <>Sign In <Lock size={11} /></>
+            ) : (
+              <>Open <ArrowRight size={11} /></>
+            )}
+          </span>
         </div>
       )}
     </>

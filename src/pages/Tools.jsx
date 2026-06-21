@@ -1,8 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, CheckCircle, X } from 'lucide-react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import ToolCard from '../components/ToolCard';
 import SearchSortBar from '../components/SearchSortBar';
 import { getTools, getComingSoon, joinWaitlist, getLikeCount } from '../lib/contentStore';
@@ -63,7 +61,6 @@ export default function Tools() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <motion.div
@@ -233,7 +230,6 @@ export default function Tools() {
         </motion.div>
       )}
 
-      <Footer />
     </div>
   );
 }

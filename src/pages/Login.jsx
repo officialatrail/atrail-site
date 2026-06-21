@@ -3,8 +3,6 @@ import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import PasswordInput from '../components/PasswordInput';
 
 export default function Login() {
@@ -32,7 +30,6 @@ export default function Login() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24 flex items-center justify-center px-4">
         <motion.div
           className="w-full max-w-md bg-white dark:bg-zinc-900 rounded-3xl p-8 sm:p-10 shadow-xl border border-slate-100 dark:border-zinc-800"
@@ -93,7 +90,6 @@ export default function Login() {
           </Link>
         </motion.div>
       </main>
-      <Footer />
     </div>
   );
 }

@@ -9,6 +9,8 @@ import { ThemeProvider } from './src/context/ThemeContext.jsx';
 import ProtectedRoute from './src/components/ProtectedRoute.jsx';
 import ScrollProgress from './src/components/ScrollProgress.jsx';
 import ErrorBoundary from './src/components/ErrorBoundary.jsx';
+import Header from './src/components/Header.jsx';
+import Footer from './src/components/Footer.jsx';
 
 import Home from './src/pages/Home.jsx';
 import Tools from './src/pages/Tools.jsx';
@@ -74,17 +76,19 @@ export default function App() {
         <AuthProvider>
           <Router basename={import.meta.env.BASE_URL}>
             <ScrollProgress />
+            <Header />
             <main className="min-h-screen bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 transition-colors duration-300">
               <AnimatedRoutes />
-              <ToastContainer
-                position="top-right"
-                autoClose={3000}
-                newestOnTop
-                closeOnClick
-                pauseOnHover
-                theme="light"
-              />
             </main>
+            <Footer />
+            <ToastContainer
+              position="top-right"
+              autoClose={3000}
+              newestOnTop
+              closeOnClick
+              pauseOnHover
+              theme="light"
+            />
           </Router>
         </AuthProvider>
       </ThemeProvider>

@@ -2,8 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { Save, Plus, LogOut, Trash2, Mail } from 'lucide-react';
 import { toast } from 'react-toastify';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
 import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
 import { platformNames } from '../lib/platformIcons';
@@ -96,8 +94,9 @@ function ArticlesAdmin() {
         url: `https://officialatrail.online/articles/${item.slug}`,
       });
       toast.success('Update email sent');
-    } catch {
-      toast.error('Could not send - check the send-update function is deployed.');
+    } catch (err) {
+      console.error('send-update failed:', err);
+      toast.error(err?.message || 'Could not send - see browser console for details.');
     }
   };
 
@@ -209,8 +208,9 @@ function ToolsAdmin() {
         url: 'https://officialatrail.online/tools',
       });
       toast.success('Update email sent');
-    } catch {
-      toast.error('Could not send - check the send-update function is deployed.');
+    } catch (err) {
+      console.error('send-update failed:', err);
+      toast.error(err?.message || 'Could not send - see browser console for details.');
     }
   };
 
@@ -808,7 +808,6 @@ export default function Admin() {
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-zinc-950 transition-colors duration-300">
-      <Header />
       <main className="pt-32 pb-24">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between mb-10">
@@ -850,7 +849,6 @@ export default function Admin() {
           </motion.div>
         </div>
       </main>
-      <Footer />
     </div>
   );
 }
