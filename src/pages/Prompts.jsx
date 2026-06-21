@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Copy, Check, CheckCircle, Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Copy, Check, CheckCircle, Search, ChevronDown, ChevronUp, ArrowDownUp } from 'lucide-react';
 import { toast } from 'react-toastify';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
-import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail } from '../lib/contentStore';
+import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getLikeCount } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
@@ -26,6 +26,7 @@ export default function Prompts() {
   const [email, setEmail] = useState('');
   const [search, setSearch] = useState('');
   const [expanded, setExpanded] = useState({});
+  const [sortBy, setSortBy] = useState('liked');
 
   useEffect(() => {
     isMyEmailApproved().then(setUnlocked);
@@ -40,14 +41,23 @@ export default function Prompts() {
 
   const toggleExpanded = (key) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));
 
-  const filteredPrompts = prompts.filter((p) => {
-    const q = search.toLowerCase();
-    return (
-      p.title.toLowerCase().includes(q) ||
-      p.description.toLowerCase().includes(q) ||
-      p.category.toLowerCase().includes(q)
-    );
-  });
+  const filteredPrompts = prompts
+    .filter((p) => {
+      const q = search.toLowerCase();
+      return (
+        p.title.toLowerCase().includes(q) ||
+        p.description.toLowerCase().includes(q) ||
+        p.category.toLowerCase().includes(q)
+      );
+    })
+    .map((p, idx) => ({ p, idx }))
+    .sort((a, b) => {
+      if (sortBy === 'recent') return a.idx - b.idx;
+      if (sortBy === 'az') return a.p.title.localeCompare(b.p.title);
+      const diff = getLikeCount(`prompt-${b.p.title}`) - getLikeCount(`prompt-${a.p.title}`);
+      return diff !== 0 ? diff : a.idx - b.idx;
+    })
+    .map(({ p }) => p);
 
   const handleRequest = async (e) => {
     e.preventDefault();
@@ -89,6 +99,21 @@ export default function Prompts() {
               placeholder="Search prompts..."
               className="w-full pl-11 pr-4 py-3 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500"
             />
+          </div>
+
+          <div className="flex justify-center mb-8">
+            <div className="relative inline-flex items-center">
+              <ArrowDownUp className="absolute left-3 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none"
+              >
+                <option value="liked">Most Liked</option>
+                <option value="recent">Most Recent</option>
+                <option value="az">A - Z</option>
+              </select>
+            </div>
           </div>
 
           {!isAuthenticated && hiddenCount > 0 && (

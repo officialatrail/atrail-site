@@ -1,24 +1,31 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Eye } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import NotFound from './NotFound';
 import ArticleRenderer from '../components/ArticleRenderer';
 import LikeButton from '../components/LikeButton';
-import { getArticles } from '../lib/contentStore';
+import CommentSection from '../components/CommentSection';
+import { getArticles, getReadCount, recordRead } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 
 export default function ArticleDetail() {
   const { slug } = useParams();
   const articles = getArticles();
   const article = articles.find((a) => a.slug === slug);
+  const [reads, setReads] = useState(() => (article ? getReadCount(`article-${article.slug}`) : 0));
 
   useDocumentHead(
     article ? `${article.title} | Atrail` : undefined,
     article ? article.excerpt : undefined
   );
+
+  useEffect(() => {
+    if (!article) return;
+    recordRead(`article-${article.slug}`).then(setReads).catch(() => {});
+  }, [article?.slug]);
 
   if (!article) return <NotFound />;
 
@@ -43,6 +50,8 @@ export default function ArticleDetail() {
               <span>{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
               <span>·</span>
               <span>{article.readTime}</span>
+              <span>·</span>
+              <span className="inline-flex items-center gap-1"><Eye size={13} /> {reads.toLocaleString()} reads</span>
             </div>
 
             <h1 className="font-display text-3xl md:text-5xl font-bold text-zinc-900 dark:text-white mb-6 leading-tight">
@@ -54,6 +63,8 @@ export default function ArticleDetail() {
             </div>
 
             <ArticleRenderer body={article.body} />
+
+            <CommentSection articleSlug={article.slug} />
           </motion.div>
         </article>
       </main>

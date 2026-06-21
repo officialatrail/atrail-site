@@ -4,6 +4,7 @@ import { motion } from 'framer-motion';
 import { Play } from 'lucide-react';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
+import LikeButton from './LikeButton';
 
 export default function ToolCard({ tool, locked, onPlayVideo }) {
   const platformInfo = tool.platform ? platforms[tool.platform] : null;
@@ -38,6 +39,11 @@ export default function ToolCard({ tool, locked, onPlayVideo }) {
         </p>
       ) : (
         <p className="font-rubik text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">{tool.description}</p>
+      )}
+      {!locked && (
+        <div className="mt-4 relative z-10">
+          <LikeButton itemKey={`tool-${tool.name}`} />
+        </div>
       )}
     </>
   );

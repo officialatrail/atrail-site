@@ -1,26 +1,21 @@
 import React from 'react';
 
-// Wraps a headline word/phrase with a thick, slightly hand-drawn underline
-// instead of coloring the text itself.
+// Underlines just the words themselves using a background-image instead of an
+// absolutely-positioned SVG, so when the phrase wraps onto multiple lines on
+// mobile, box-decoration-break clones the underline under each line instead
+// of stretching one long line under the whole wrapped block.
 export default function Highlight({ children }) {
   return (
-    <span className="relative inline-block">
+    <span
+      style={{
+        backgroundImage: 'linear-gradient(transparent calc(100% - 0.18em), #22d97a calc(100% - 0.18em) calc(100% - 0.02em), transparent calc(100% - 0.02em))',
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '100% 100%',
+        boxDecorationBreak: 'clone',
+        WebkitBoxDecorationBreak: 'clone',
+      }}
+    >
       {children}
-      <svg
-        className="absolute left-0 w-full pointer-events-none"
-        style={{ bottom: '-0.12em', height: '0.32em' }}
-        viewBox="0 0 220 16"
-        preserveAspectRatio="none"
-        fill="none"
-      >
-        <path
-          d="M3 11 C 50 14, 90 6, 130 9 C 160 10.5, 190 12.5, 217 7.5"
-          stroke="#22d97a"
-          strokeWidth="7"
-          strokeLinecap="round"
-          fill="none"
-        />
-      </svg>
     </span>
   );
 }

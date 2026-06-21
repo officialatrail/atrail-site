@@ -80,6 +80,7 @@ const cache = {
   comingSoon: loadLocal(KEYS.comingSoon, defaultComingSoon),
   stats: loadLocal(KEYS.stats, defaultStats),
   likes: {},
+  reads: {},
 };
 
 export async function hydrateContentStore() {
@@ -101,6 +102,15 @@ export async function hydrateContentStore() {
     }
   } catch {
     /* keep empty likes cache */
+  }
+
+  try {
+    const { data, error } = await supabase.from('reads').select('item_key, count');
+    if (!error && data) {
+      cache.reads = Object.fromEntries(data.map((r) => [r.item_key, r.count]));
+    }
+  } catch {
+    /* keep empty reads cache */
   }
 }
 
@@ -209,6 +219,117 @@ export async function toggleLike(itemKey) {
   cache.likes[itemKey] = data;
   saveLocal(KEYS.likedByMe, alreadyLiked ? liked.filter((k) => k !== itemKey) : [...liked, itemKey]);
   return { liked: !alreadyLiked, count: data };
+}
+
+export const getReadCount = (itemKey) => cache.reads[itemKey] || 0;
+
+export async function recordRead(itemKey) {
+  const { data, error } = await supabase.rpc('adjust_read_count', { p_item_key: itemKey });
+  if (error) throw error;
+  cache.reads[itemKey] = data;
+  return data;
+}
+
+const ANON_VOTER_KEY = 'atrail_anon_voter_id';
+const COMMENT_VOTES_KEY = 'atrail_comment_votes_v1';
+
+function getAnonVoterId() {
+  let id = localStorage.getItem(ANON_VOTER_KEY);
+  if (!id) {
+    id = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    localStorage.setItem(ANON_VOTER_KEY, id);
+  }
+  return id;
+}
+
+async function getMyUserId() {
+  const { data } = await supabase.auth.getUser();
+  return data?.user?.id || null;
+}
+
+export async function getMyAlias() {
+  const userId = await getMyUserId();
+  if (!userId) return null;
+  const { data, error } = await supabase.from('profiles').select('alias').eq('id', userId).single();
+  if (error) return null;
+  return data?.alias || null;
+}
+
+export async function setMyAlias(alias) {
+  const userId = await getMyUserId();
+  if (!userId) throw new Error('Sign in to set an alias.');
+  const { error } = await supabase.from('profiles').update({ alias }).eq('id', userId);
+  if (error) {
+    if (error.code === '23505') throw new Error('That alias is already taken - try another.');
+    throw error;
+  }
+  return alias;
+}
+
+export async function fetchComments(articleSlug) {
+  const { data: comments, error } = await supabase
+    .from('comments')
+    .select('id, user_id, alias_at_post, body, upvotes, downvotes, created_at')
+    .eq('article_slug', articleSlug)
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+
+  const userIds = [...new Set(comments.map((c) => c.user_id))];
+  let aliasMap = {};
+  if (userIds.length) {
+    const { data: aliases } = await supabase.from('profile_aliases').select('id, alias').in('id', userIds);
+    aliasMap = Object.fromEntries((aliases || []).map((a) => [a.id, a.alias]));
+  }
+
+  return comments.map((c) => ({ ...c, currentAlias: aliasMap[c.user_id] || c.alias_at_post }));
+}
+
+export async function postComment(articleSlug, body) {
+  const userId = await getMyUserId();
+  if (!userId) throw new Error('Sign in to comment.');
+  const alias = await getMyAlias();
+  if (!alias) throw new Error('Choose an alias first.');
+
+  const { data, error } = await supabase
+    .from('comments')
+    .insert({ article_slug: articleSlug, user_id: userId, alias_at_post: alias, body })
+    .select('id, user_id, alias_at_post, body, upvotes, downvotes, created_at')
+    .single();
+  if (error) throw error;
+  return { ...data, currentAlias: alias };
+}
+
+export async function deleteComment(commentId) {
+  const { error } = await supabase.from('comments').delete().eq('id', commentId);
+  if (error) throw error;
+}
+
+export function getMyCommentVote(commentId) {
+  const votes = loadLocal(COMMENT_VOTES_KEY, {});
+  return votes[commentId] || 0;
+}
+
+export async function voteOnComment(commentId, vote) {
+  const userId = await getMyUserId();
+  const voterKey = userId ? `user:${userId}` : `anon:${getAnonVoterId()}`;
+
+  const votes = loadLocal(COMMENT_VOTES_KEY, {});
+  const current = votes[commentId] || 0;
+
+  const { data, error } = await supabase.rpc('adjust_comment_vote', {
+    p_comment_id: commentId,
+    p_voter_key: voterKey,
+    p_vote: vote,
+  });
+  if (error) throw error;
+
+  const row = Array.isArray(data) ? data[0] : data;
+  const myVote = current === vote ? 0 : vote;
+  if (myVote === 0) delete votes[commentId];
+  else votes[commentId] = myVote;
+  saveLocal(COMMENT_VOTES_KEY, votes);
+
+  return { upvotes: row.upvotes, downvotes: row.downvotes, myVote };
 }
 
 export const isBannerDismissed = () => loadLocal(KEYS.bannerDismissed, false);

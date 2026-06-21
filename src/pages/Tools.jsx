@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle, X } from 'lucide-react';
+import { ArrowRight, CheckCircle, X, ArrowDownUp } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ToolCard from '../components/ToolCard';
-import { getTools, getComingSoon, joinWaitlist } from '../lib/contentStore';
+import { getTools, getComingSoon, joinWaitlist, getLikeCount } from '../lib/contentStore';
 import { platforms } from '../lib/platformIcons';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
@@ -23,7 +23,17 @@ export default function Tools() {
   const hiddenCount = allTools.length - tools.length;
   const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
-  const filtered = tools.filter((t) => activePlatform === 'All' || t.platform === activePlatform);
+  const [sortBy, setSortBy] = useState('liked');
+  const filtered = tools
+    .filter((t) => activePlatform === 'All' || t.platform === activePlatform)
+    .map((t, idx) => ({ t, idx }))
+    .sort((a, b) => {
+      if (sortBy === 'recent') return a.idx - b.idx;
+      if (sortBy === 'az') return a.t.name.localeCompare(b.t.name);
+      const diff = getLikeCount(`tool-${b.t.name}`) - getLikeCount(`tool-${a.t.name}`);
+      return diff !== 0 ? diff : a.idx - b.idx;
+    })
+    .map(({ t }) => t);
   const [activeVideo, setActiveVideo] = useState(null);
 
   const [email, setEmail] = useState('');
@@ -85,6 +95,21 @@ export default function Tools() {
               </button>
             ))}
           </motion.div>
+
+          <div className="flex justify-center mb-8">
+            <div className="relative inline-flex items-center">
+              <ArrowDownUp className="absolute left-3 w-3.5 h-3.5 text-zinc-400 pointer-events-none" />
+              <select
+                value={sortBy}
+                onChange={(e) => setSortBy(e.target.value)}
+                className="pl-9 pr-4 py-2 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-brand-500 appearance-none"
+              >
+                <option value="liked">Most Liked</option>
+                <option value="recent">Most Recent</option>
+                <option value="az">A - Z</option>
+              </select>
+            </div>
+          </div>
 
           {!isAuthenticated && hiddenCount > 0 && (
             <p className="text-center font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-8">

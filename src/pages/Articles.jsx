@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, Search } from 'lucide-react';
+import { ArrowRight, Search, Eye } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import LikeButton from '../components/LikeButton';
-import { getArticles } from '../lib/contentStore';
+import { getArticles, getReadCount } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 
@@ -72,6 +72,8 @@ export default function Articles() {
                     <span>{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>
                     <span>·</span>
                     <span>{article.readTime}</span>
+                    <span>·</span>
+                    <span className="inline-flex items-center gap-1"><Eye size={13} /> {getReadCount(`article-${article.slug}`).toLocaleString()} reads</span>
                   </div>
                   <h2 className="font-rubik text-2xl font-bold text-zinc-900 dark:text-white mb-3 group-hover:text-brand-600 dark:group-hover:text-brand-400 transition-colors duration-300">
                     {article.title}
