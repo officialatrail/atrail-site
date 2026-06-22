@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut } from 'lucide-react';
+import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -144,6 +144,12 @@ const Header = () => {
 
             {isAuthenticated ? (
               <>
+                <Link
+                  to="/account"
+                  className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-600 dark:text-zinc-300 hover:text-brand-600 dark:hover:text-brand-400"
+                >
+                  <User size={16} /> Account
+                </Link>
                 {isAdmin && (
                   <Link
                     to="/admin"
@@ -215,6 +221,13 @@ const Header = () => {
               })}
               {isAuthenticated ? (
                 <>
+                  <Link
+                    to="/account"
+                    className="flex items-center gap-1.5 px-4 py-2 text-sm font-medium text-zinc-900 dark:text-zinc-100"
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <User size={16} /> Account
+                  </Link>
                   {isAdmin && (
                     <Link
                       to="/admin"

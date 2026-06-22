@@ -24,6 +24,7 @@ import SignUp from './src/pages/SignUp.jsx';
 import ForgotPassword from './src/pages/ForgotPassword.jsx';
 import ResetPassword from './src/pages/ResetPassword.jsx';
 import Admin from './src/pages/Admin.jsx';
+import Account from './src/pages/Account.jsx';
 import PrivacyPolicy from './src/pages/PrivacyPolicy.jsx';
 import TermsOfService from './src/pages/TermsOfService.jsx';
 import NotFound from './src/pages/NotFound.jsx';
@@ -55,6 +56,10 @@ function AnimatedRoutes() {
           <Route
             path="/admin"
             element={<ProtectedRoute adminOnly><Admin /></ProtectedRoute>}
+          />
+          <Route
+            path="/account"
+            element={<ProtectedRoute><Account /></ProtectedRoute>}
           />
           <Route path="/articles" element={<Articles />} />
           <Route path="/articles/:slug" element={<ArticleDetail />} />

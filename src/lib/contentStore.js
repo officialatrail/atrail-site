@@ -277,6 +277,22 @@ export async function setMyAlias(alias) {
   return alias;
 }
 
+export async function getMyProfile() {
+  const userId = await getMyUserId();
+  if (!userId) return null;
+  const { data, error } = await supabase.from('profiles').select('alias, subscribed').eq('id', userId).single();
+  if (error) return null;
+  return data;
+}
+
+export async function setMySubscribed(subscribed) {
+  const userId = await getMyUserId();
+  if (!userId) throw new Error('Sign in required.');
+  const { error } = await supabase.from('profiles').update({ subscribed }).eq('id', userId);
+  if (error) throw error;
+  return subscribed;
+}
+
 export async function fetchComments(articleSlug) {
   const { data: comments, error } = await supabase
     .from('comments')
