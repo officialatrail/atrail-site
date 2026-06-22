@@ -85,9 +85,9 @@ function ArticlesAdmin() {
     persist(saveArticles, next, 'Article removed');
   };
 
-  const downloadPdf = (item) => {
+  const downloadPdf = async (item) => {
     try {
-      generateArticlePdf(item);
+      await generateArticlePdf(item);
     } catch (err) {
       console.error('PDF generation failed:', err);
       toast.error('Could not generate the PDF - check the console.');
