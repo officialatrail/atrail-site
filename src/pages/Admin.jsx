@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon } from 'lucide-react';
+import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon, Download } from 'lucide-react';
+import { generateArticlePdf } from '../lib/articlePdf';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { iconNames } from '../lib/iconRegistry';
@@ -84,6 +85,15 @@ function ArticlesAdmin() {
     persist(saveArticles, next, 'Article removed');
   };
 
+  const downloadPdf = (item) => {
+    try {
+      generateArticlePdf(item);
+    } catch (err) {
+      console.error('PDF generation failed:', err);
+      toast.error('Could not generate the PDF - check the console.');
+    }
+  };
+
   const sendUpdate = async (item) => {
     if (!window.confirm(`Email the waitlist and exclusive-access list about "${item.title}"?`)) return;
     try {
@@ -161,12 +171,15 @@ function ArticlesAdmin() {
                 onChange={(e) => update(i, 'body', e.target.value)}
               />
             </Field>
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 flex-wrap">
               <button onClick={save} className={saveBtnClass}>
                 <Save size={14} /> Save All
               </button>
               <button onClick={() => sendUpdate(item)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400">
                 <Mail size={14} /> Email subscribers about this
+              </button>
+              <button onClick={() => downloadPdf(item)} className="inline-flex items-center gap-1.5 text-sm font-semibold text-zinc-500 hover:text-brand-600 dark:text-zinc-400 dark:hover:text-brand-400">
+                <Download size={14} /> Download LinkedIn PDF
               </button>
             </div>
           </div>

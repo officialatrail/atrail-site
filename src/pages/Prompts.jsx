@@ -10,6 +10,26 @@ import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
 
+function linkify(text) {
+  const parts = text.split(/(https?:\/\/[^\s]+)/g);
+  return parts.map((part, i) =>
+    /^https?:\/\//.test(part) ? (
+      <a
+        key={i}
+        href={part}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-brand-600 dark:text-brand-400 underline hover:text-brand-700 break-all"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {part}
+      </a>
+    ) : (
+      <React.Fragment key={i}>{part}</React.Fragment>
+    )
+  );
+}
+
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Most Recent' },
   { value: 'liked', label: 'Most Liked' },
@@ -164,7 +184,7 @@ export default function Prompts() {
                         </button>
                       )}
                     </div>
-                    <p className="font-rubik text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">{p.description}</p>
+                    <p className="font-rubik text-zinc-600 dark:text-zinc-400 leading-relaxed mb-4">{linkify(p.description)}</p>
 
                     {isLocked ? (
                       <>
