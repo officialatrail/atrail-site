@@ -9,26 +9,7 @@ import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getL
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
-
-function linkify(text) {
-  const parts = text.split(/(https?:\/\/[^\s]+)/g);
-  return parts.map((part, i) =>
-    /^https?:\/\//.test(part) ? (
-      <a
-        key={i}
-        href={part}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-brand-600 dark:text-brand-400 underline hover:text-brand-700 break-all"
-        onClick={(e) => e.stopPropagation()}
-      >
-        {part}
-      </a>
-    ) : (
-      <React.Fragment key={i}>{part}</React.Fragment>
-    )
-  );
-}
+import { linkify } from '../lib/linkify';
 
 const SORT_OPTIONS = [
   { value: 'recent', label: 'Most Recent' },
