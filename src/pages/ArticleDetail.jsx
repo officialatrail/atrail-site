@@ -43,7 +43,7 @@ export default function ArticleDetail() {
             </Link>
 
             <div className="flex items-center gap-3 mb-4 text-sm text-zinc-500 dark:text-zinc-500">
-              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300">
+              <span className="text-xs font-bold px-2.5 py-1 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900">
                 {article.category}
               </span>
               <span>{new Date(article.date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}</span>

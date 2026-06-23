@@ -37,7 +37,7 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
           </span>
         )}
         {tool.price && (
-          <span className="font-rubik text-xs font-bold px-2.5 py-1 rounded-full bg-brand-100 dark:bg-brand-900/40 text-brand-700 dark:text-brand-300">
+          <span className="font-rubik text-xs font-bold px-2.5 py-1 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900">
             {tool.price}
           </span>
         )}

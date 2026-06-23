@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowBigUp, ArrowBigDown, X } from 'lucide-react';
+import { ChevronUp, ChevronDown, X } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 import { supabase } from '../lib/supabaseClient';
@@ -206,47 +206,52 @@ export default function CommentSection({ articleSlug }) {
             const myVote = getMyCommentVote(c.id);
             const isMine = c.user_id === myUserId;
             return (
-              <div key={c.id} className="flex gap-3">
-                <div className="flex flex-col items-center gap-0.5 pt-1 shrink-0">
+              <div key={c.id} className="bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4">
+                <div className="flex items-center gap-2 mb-1 flex-wrap">
+                  {isMine ? (
+                    <button
+                      onClick={() => setAliasPromptMode('edit')}
+                      className="font-bold text-sm text-brand-600 dark:text-brand-400 hover:underline"
+                    >
+                      @{c.currentAlias}
+                    </button>
+                  ) : (
+                    <span className="font-bold text-sm text-zinc-800 dark:text-zinc-200">@{c.currentAlias}</span>
+                  )}
+                  {c.currentAlias !== c.alias_at_post && (
+                    <span className="text-xs text-zinc-400">(formerly @{c.alias_at_post})</span>
+                  )}
+                  <span className="text-xs text-zinc-400">· {timeAgo(c.created_at)}</span>
+                  {(isMine || isAdmin) && (
+                    <button onClick={() => handleDelete(c.id)} className="ml-auto text-zinc-400 hover:text-red-500" aria-label="Delete comment">
+                      <X size={14} />
+                    </button>
+                  )}
+                </div>
+                <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words mb-3">{c.body}</p>
+
+                <div className="flex items-center gap-2">
                   <button
                     onClick={() => handleVote(c.id, 1)}
-                    className={`p-1 rounded transition-colors ${myVote === 1 ? 'text-brand-600' : 'text-zinc-400 hover:text-brand-600'}`}
-                    aria-label="Upvote"
+                    className={`inline-flex items-center gap-1 pl-2.5 pr-3 py-1 rounded-full text-xs font-semibold border transition-colors ${
+                      myVote === 1
+                        ? 'bg-brand-600 text-white border-brand-600'
+                        : 'bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 border-zinc-300 dark:border-zinc-600 hover:border-brand-400'
+                    }`}
                   >
-                    <ArrowBigUp size={18} fill={myVote === 1 ? 'currentColor' : 'none'} />
+                    <ChevronUp size={14} /> Upvote{c.upvotes > 0 ? ` · ${c.upvotes}` : ''}
                   </button>
-                  <span className="text-xs font-semibold text-zinc-500 dark:text-zinc-400">{c.upvotes - c.downvotes}</span>
                   <button
                     onClick={() => handleVote(c.id, -1)}
-                    className={`p-1 rounded transition-colors ${myVote === -1 ? 'text-red-500' : 'text-zinc-400 hover:text-red-500'}`}
+                    className={`inline-flex items-center justify-center w-7 h-7 rounded-full border transition-colors ${
+                      myVote === -1
+                        ? 'bg-zinc-800 dark:bg-zinc-200 text-white dark:text-zinc-900 border-zinc-800 dark:border-zinc-200'
+                        : 'bg-white dark:bg-zinc-800 text-zinc-400 dark:text-zinc-500 border-zinc-300 dark:border-zinc-600 hover:border-zinc-400'
+                    }`}
                     aria-label="Downvote"
                   >
-                    <ArrowBigDown size={18} fill={myVote === -1 ? 'currentColor' : 'none'} />
+                    <ChevronDown size={14} />
                   </button>
-                </div>
-                <div className="flex-1 bg-zinc-50 dark:bg-zinc-900 rounded-xl p-4 min-w-0">
-                  <div className="flex items-center gap-2 mb-1 flex-wrap">
-                    {isMine ? (
-                      <button
-                        onClick={() => setAliasPromptMode('edit')}
-                        className="font-bold text-sm text-brand-600 dark:text-brand-400 hover:underline"
-                      >
-                        @{c.currentAlias}
-                      </button>
-                    ) : (
-                      <span className="font-bold text-sm text-zinc-800 dark:text-zinc-200">@{c.currentAlias}</span>
-                    )}
-                    {c.currentAlias !== c.alias_at_post && (
-                      <span className="text-xs text-zinc-400">(formerly @{c.alias_at_post})</span>
-                    )}
-                    <span className="text-xs text-zinc-400">· {timeAgo(c.created_at)}</span>
-                    {(isMine || isAdmin) && (
-                      <button onClick={() => handleDelete(c.id)} className="ml-auto text-zinc-400 hover:text-red-500" aria-label="Delete comment">
-                        <X size={14} />
-                      </button>
-                    )}
-                  </div>
-                  <p className="text-sm text-zinc-700 dark:text-zinc-300 leading-relaxed break-words">{c.body}</p>
                 </div>
               </div>
             );
