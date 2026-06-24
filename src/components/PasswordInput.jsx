@@ -1,18 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, forwardRef } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
 
-export default function PasswordInput({ value, onChange, autoComplete, placeholder }) {
+const PasswordInput = forwardRef(function PasswordInput(
+  { value, onChange, autoComplete, placeholder, onAnimationStart, className = '' },
+  ref
+) {
   const [visible, setVisible] = useState(false);
 
   return (
     <div className="relative">
       <input
+        ref={ref}
         type={visible ? 'text' : 'password'}
         value={value}
         onChange={onChange}
         autoComplete={autoComplete}
         placeholder={placeholder}
-        className="w-full px-4 py-3 pr-11 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+        onAnimationStart={onAnimationStart}
+        className={`w-full px-4 py-3 pr-11 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500 ${className}`}
       />
       <button
         type="button"
@@ -24,4 +29,6 @@ export default function PasswordInput({ value, onChange, autoComplete, placehold
       </button>
     </div>
   );
-}
+});
+
+export default PasswordInput;

@@ -2,6 +2,17 @@
 @tailwind components;
 @tailwind utilities;
 
+/* Lets JS detect when a browser/password-manager autofills a field, as opposed
+   to the user typing - used to auto-submit the login form on autofill only. */
+@keyframes onAutoFillStart {
+  from { opacity: 1; }
+  to { opacity: 1; }
+}
+.autofill-watch:-webkit-autofill,
+.autofill-watch:autofill {
+  animation-name: onAutoFillStart;
+}
+
 html, body {
   font-family: 'Rubik', system-ui, sans-serif;
   background-color: #ffffff;

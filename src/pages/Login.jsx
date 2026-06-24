@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { ArrowRight } from 'lucide-react';
@@ -15,16 +15,40 @@ export default function Login() {
   const location = useLocation();
   const from = location.state?.from?.pathname || '/';
 
-  const onSubmit = async (e) => {
-    e.preventDefault();
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const autofilledRef = useRef({ email: false, password: false });
+  const autoSubmittedRef = useRef(false);
+
+  const doLogin = async (emailValue, passwordValue) => {
     setSubmitting(true);
     setError('');
-    const errorMessage = await login(email, password);
+    const errorMessage = await login(emailValue, passwordValue);
     setSubmitting(false);
     if (!errorMessage) {
       navigate(from, { replace: true });
     } else {
       setError(errorMessage);
+    }
+  };
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    doLogin(email, password);
+  };
+
+  // Detects browser/password-manager autofill (not manual typing) via the
+  // :-webkit-autofill animation hook, and auto-submits once both fields are filled.
+  const handleAutofill = (field) => (e) => {
+    if (e.animationName !== 'onAutoFillStart') return;
+    autofilledRef.current[field] = true;
+    if (autofilledRef.current.email && autofilledRef.current.password && !autoSubmittedRef.current) {
+      autoSubmittedRef.current = true;
+      const filledEmail = emailInputRef.current?.value || '';
+      const filledPassword = passwordInputRef.current?.value || '';
+      setEmail(filledEmail);
+      setPassword(filledPassword);
+      doLogin(filledEmail, filledPassword);
     }
   };
 
@@ -50,10 +74,12 @@ export default function Login() {
             <div>
               <label className="block text-sm font-medium text-zinc-700 dark:text-zinc-300 mb-1.5">Email</label>
               <input
+                ref={emailInputRef}
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
+                onAnimationStart={handleAutofill('email')}
+                className="autofill-watch w-full px-4 py-3 rounded-xl border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white focus:outline-none focus:ring-2 focus:ring-brand-500"
                 autoComplete="username"
               />
             </div>
@@ -64,7 +90,14 @@ export default function Login() {
                   Forgot password?
                 </Link>
               </div>
-              <PasswordInput value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="current-password" />
+              <PasswordInput
+                ref={passwordInputRef}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                onAnimationStart={handleAutofill('password')}
+                className="autofill-watch"
+                autoComplete="current-password"
+              />
             </div>
             {error && <p className="text-red-500 text-sm">{error}</p>}
 

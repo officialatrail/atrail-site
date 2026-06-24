@@ -234,10 +234,25 @@ export async function toggleLike(itemKey) {
 
 export const getReadCount = (itemKey) => cache.reads[itemKey] || 0;
 
+const READ_SESSION_KEY = 'atrail_read_session_v1';
+
 export async function recordRead(itemKey) {
+  let seen = [];
+  try {
+    seen = JSON.parse(sessionStorage.getItem(READ_SESSION_KEY) || '[]');
+  } catch {
+    /* ignore malformed sessionStorage value */
+  }
+
+  if (seen.includes(itemKey)) {
+    return getReadCount(itemKey);
+  }
+
   const { data, error } = await supabase.rpc('adjust_read_count', { p_item_key: itemKey });
   if (error) throw error;
   cache.reads[itemKey] = data;
+
+  sessionStorage.setItem(READ_SESSION_KEY, JSON.stringify([...seen, itemKey]));
   return data;
 }
 
