@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon, Download } from 'lucide-react';
+import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon, Download, GripVertical } from 'lucide-react';
 import { generateArticlePdf } from '../lib/articlePdf';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
@@ -53,6 +53,22 @@ async function persist(saveFn, data, successMsg) {
 function ArticlesAdmin() {
   const [items, setItems] = useState(getArticles());
   const textareaRefs = React.useRef({});
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (i) => setDragIndex(i);
+  const handleDragOver = (e, i) => { e.preventDefault(); setDragOverIndex(i); };
+  const handleDrop = (i) => {
+    if (dragIndex === null || dragIndex === i) { setDragIndex(null); setDragOverIndex(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(i, 0, moved);
+    setItems(next);
+    persist(saveArticles, next, 'Order saved');
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -140,8 +156,17 @@ function ArticlesAdmin() {
       </button>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={item.slug} className={cardClass}>
+          <div
+            key={item.slug}
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={handleDragEnd}
+            className={`${cardClass} transition-all ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'ring-2 ring-brand-500' : ''}`}
+          >
             <div className="flex items-start justify-between gap-3">
+              <GripVertical size={18} className="text-zinc-300 dark:text-zinc-600 cursor-grab mt-1 shrink-0" />
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
@@ -194,6 +219,22 @@ const linkTypes = ['article', 'link', 'github', 'video'];
 function ToolsAdmin() {
   const [items, setItems] = useState(getTools());
   const articles = getArticles();
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (i) => setDragIndex(i);
+  const handleDragOver = (e, i) => { e.preventDefault(); setDragOverIndex(i); };
+  const handleDrop = (i) => {
+    if (dragIndex === null || dragIndex === i) { setDragIndex(null); setDragOverIndex(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(i, 0, moved);
+    setItems(next);
+    persist(saveTools, next, 'Order saved');
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -261,8 +302,17 @@ function ToolsAdmin() {
       </button>
       <div className="space-y-4">
       {items.map((item, i) => (
-        <div key={item.name + i} className={cardClass}>
+        <div
+          key={item.name + i}
+          draggable
+          onDragStart={() => handleDragStart(i)}
+          onDragOver={(e) => handleDragOver(e, i)}
+          onDrop={() => handleDrop(i)}
+          onDragEnd={handleDragEnd}
+          className={`${cardClass} transition-all ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'ring-2 ring-brand-500' : ''}`}
+        >
           <div className="flex items-start justify-between gap-3">
+            <GripVertical size={18} className="text-zinc-300 dark:text-zinc-600 cursor-grab mt-1 shrink-0" />
             <div className="grid grid-cols-2 gap-3 flex-1">
               <Field label="Name">
                 <input className={inputClass} value={item.name} onChange={(e) => update(i, 'name', e.target.value)} />
@@ -327,6 +377,22 @@ function ToolsAdmin() {
 
 function PromptsAdmin() {
   const [items, setItems] = useState(getPrompts());
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (i) => setDragIndex(i);
+  const handleDragOver = (e, i) => { e.preventDefault(); setDragOverIndex(i); };
+  const handleDrop = (i) => {
+    if (dragIndex === null || dragIndex === i) { setDragIndex(null); setDragOverIndex(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(i, 0, moved);
+    setItems(next);
+    persist(savePrompts, next, 'Order saved');
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -358,8 +424,17 @@ function PromptsAdmin() {
       </button>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={item.title + i} className={cardClass}>
+          <div
+            key={item.title + i}
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={handleDragEnd}
+            className={`${cardClass} transition-all ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'ring-2 ring-brand-500' : ''}`}
+          >
             <div className="flex items-start justify-between gap-3">
+              <GripVertical size={18} className="text-zinc-300 dark:text-zinc-600 cursor-grab mt-1 shrink-0" />
               <div className="grid grid-cols-2 gap-3 flex-1">
                 <Field label="Title">
                   <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
@@ -398,6 +473,22 @@ function PromptsAdmin() {
 
 function PillarsAdmin() {
   const [items, setItems] = useState(getPillars());
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (i) => setDragIndex(i);
+  const handleDragOver = (e, i) => { e.preventDefault(); setDragOverIndex(i); };
+  const handleDrop = (i) => {
+    if (dragIndex === null || dragIndex === i) { setDragIndex(null); setDragOverIndex(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(i, 0, moved);
+    setItems(next);
+    persist(savePillars, next, 'Order saved');
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -426,8 +517,17 @@ function PillarsAdmin() {
       </button>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={item.title + i} className={cardClass}>
+          <div
+            key={item.title + i}
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={handleDragEnd}
+            className={`${cardClass} transition-all ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'ring-2 ring-brand-500' : ''}`}
+          >
             <div className="flex items-start justify-between gap-3">
+              <GripVertical size={18} className="text-zinc-300 dark:text-zinc-600 cursor-grab mt-1 shrink-0" />
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
@@ -461,6 +561,22 @@ function PillarsAdmin() {
 
 function VideosAdmin() {
   const [items, setItems] = useState(getVideos());
+  const [dragIndex, setDragIndex] = useState(null);
+  const [dragOverIndex, setDragOverIndex] = useState(null);
+
+  const handleDragStart = (i) => setDragIndex(i);
+  const handleDragOver = (e, i) => { e.preventDefault(); setDragOverIndex(i); };
+  const handleDrop = (i) => {
+    if (dragIndex === null || dragIndex === i) { setDragIndex(null); setDragOverIndex(null); return; }
+    const next = [...items];
+    const [moved] = next.splice(dragIndex, 1);
+    next.splice(i, 0, moved);
+    setItems(next);
+    persist(saveVideos, next, 'Order saved');
+    setDragIndex(null);
+    setDragOverIndex(null);
+  };
+  const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -489,8 +605,17 @@ function VideosAdmin() {
       </button>
       <div className="space-y-4">
         {items.map((item, i) => (
-          <div key={i} className={cardClass}>
+          <div
+            key={i}
+            draggable
+            onDragStart={() => handleDragStart(i)}
+            onDragOver={(e) => handleDragOver(e, i)}
+            onDrop={() => handleDrop(i)}
+            onDragEnd={handleDragEnd}
+            className={`${cardClass} transition-all ${dragIndex === i ? 'opacity-40' : ''} ${dragOverIndex === i && dragIndex !== i ? 'ring-2 ring-brand-500' : ''}`}
+          >
             <div className="flex items-start justify-between gap-3">
+              <GripVertical size={18} className="text-zinc-300 dark:text-zinc-600 cursor-grab mt-1 shrink-0" />
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
