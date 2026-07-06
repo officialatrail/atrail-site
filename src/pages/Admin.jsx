@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon, Download, GripVertical } from 'lucide-react';
+import { Save, Plus, LogOut, Trash2, Mail, Check, X as XIcon, Download, GripVertical, ChevronsUp } from 'lucide-react';
 import { generateArticlePdf } from '../lib/articlePdf';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
@@ -69,6 +69,15 @@ function ArticlesAdmin() {
     setDragOverIndex(null);
   };
   const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
+
+  const moveToTop = (i) => {
+    if (i === 0) return;
+    const next = [...items];
+    const [moved] = next.splice(i, 1);
+    next.unshift(moved);
+    setItems(next);
+    persist(saveArticles, next, 'Moved to top');
+  };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -170,9 +179,16 @@ function ArticlesAdmin() {
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
-              <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete article">
-                <Trash2 size={16} />
-              </button>
+              <div className="flex items-center gap-1 mt-6 shrink-0">
+                {i > 0 && (
+                  <button onClick={() => moveToTop(i)} className="text-zinc-400 hover:text-brand-500" aria-label="Move to top" title="Move to top">
+                    <ChevronsUp size={16} />
+                  </button>
+                )}
+                <button onClick={() => remove(i)} className="text-zinc-400 hover:text-red-500" aria-label="Delete article">
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <Field label="Category">
@@ -235,6 +251,15 @@ function ToolsAdmin() {
     setDragOverIndex(null);
   };
   const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
+
+  const moveToTop = (i) => {
+    if (i === 0) return;
+    const next = [...items];
+    const [moved] = next.splice(i, 1);
+    next.unshift(moved);
+    setItems(next);
+    persist(saveTools, next, 'Moved to top');
+  };
 
   const update = (index, field, value) => {
     const next = [...items];
@@ -321,9 +346,16 @@ function ToolsAdmin() {
                 <input className={inputClass} value={item.category} onChange={(e) => update(i, 'category', e.target.value)} />
               </Field>
             </div>
-            <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete tool">
-              <Trash2 size={16} />
-            </button>
+            <div className="flex items-center gap-1 mt-6 shrink-0">
+              {i > 0 && (
+                <button onClick={() => moveToTop(i)} className="text-zinc-400 hover:text-brand-500" aria-label="Move to top" title="Move to top">
+                  <ChevronsUp size={16} />
+                </button>
+              )}
+              <button onClick={() => remove(i)} className="text-zinc-400 hover:text-red-500" aria-label="Delete tool">
+                <Trash2 size={16} />
+              </button>
+            </div>
           </div>
           <Field label="Platform">
             <select className={inputClass} value={item.platform} onChange={(e) => update(i, 'platform', e.target.value)}>
@@ -394,6 +426,15 @@ function PromptsAdmin() {
   };
   const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
+  const moveToTop = (i) => {
+    if (i === 0) return;
+    const next = [...items];
+    const [moved] = next.splice(i, 1);
+    next.unshift(moved);
+    setItems(next);
+    persist(savePrompts, next, 'Moved to top');
+  };
+
   const update = (index, field, value) => {
     const next = [...items];
     next[index] = { ...next[index], [field]: value };
@@ -443,9 +484,16 @@ function PromptsAdmin() {
                   <input className={inputClass} value={item.category} onChange={(e) => update(i, 'category', e.target.value)} />
                 </Field>
               </div>
-              <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete prompt">
-                <Trash2 size={16} />
-              </button>
+              <div className="flex items-center gap-1 mt-6 shrink-0">
+                {i > 0 && (
+                  <button onClick={() => moveToTop(i)} className="text-zinc-400 hover:text-brand-500" aria-label="Move to top" title="Move to top">
+                    <ChevronsUp size={16} />
+                  </button>
+                )}
+                <button onClick={() => remove(i)} className="text-zinc-400 hover:text-red-500" aria-label="Delete prompt">
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <Field label="Description">
               <textarea className={inputClass} rows={2} value={item.description} onChange={(e) => update(i, 'description', e.target.value)} />
@@ -490,6 +538,15 @@ function PillarsAdmin() {
   };
   const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
+  const moveToTop = (i) => {
+    if (i === 0) return;
+    const next = [...items];
+    const [moved] = next.splice(i, 1);
+    next.unshift(moved);
+    setItems(next);
+    persist(savePillars, next, 'Moved to top');
+  };
+
   const update = (index, field, value) => {
     const next = [...items];
     next[index] = { ...next[index], [field]: value };
@@ -531,9 +588,16 @@ function PillarsAdmin() {
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
-              <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete pillar">
-                <Trash2 size={16} />
-              </button>
+              <div className="flex items-center gap-1 mt-6 shrink-0">
+                {i > 0 && (
+                  <button onClick={() => moveToTop(i)} className="text-zinc-400 hover:text-brand-500" aria-label="Move to top" title="Move to top">
+                    <ChevronsUp size={16} />
+                  </button>
+                )}
+                <button onClick={() => remove(i)} className="text-zinc-400 hover:text-red-500" aria-label="Delete pillar">
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <Field label="Description">
               <textarea className={inputClass} rows={2} value={item.description} onChange={(e) => update(i, 'description', e.target.value)} />
@@ -578,6 +642,15 @@ function VideosAdmin() {
   };
   const handleDragEnd = () => { setDragIndex(null); setDragOverIndex(null); };
 
+  const moveToTop = (i) => {
+    if (i === 0) return;
+    const next = [...items];
+    const [moved] = next.splice(i, 1);
+    next.unshift(moved);
+    setItems(next);
+    persist(saveVideos, next, 'Moved to top');
+  };
+
   const update = (index, field, value) => {
     const next = [...items];
     next[index] = { ...next[index], [field]: value };
@@ -619,9 +692,16 @@ function VideosAdmin() {
               <Field label="Title">
                 <input className={inputClass} value={item.title} onChange={(e) => update(i, 'title', e.target.value)} />
               </Field>
-              <button onClick={() => remove(i)} className="mt-6 text-zinc-400 hover:text-red-500" aria-label="Delete video">
-                <Trash2 size={16} />
-              </button>
+              <div className="flex items-center gap-1 mt-6 shrink-0">
+                {i > 0 && (
+                  <button onClick={() => moveToTop(i)} className="text-zinc-400 hover:text-brand-500" aria-label="Move to top" title="Move to top">
+                    <ChevronsUp size={16} />
+                  </button>
+                )}
+                <button onClick={() => remove(i)} className="text-zinc-400 hover:text-red-500" aria-label="Delete video">
+                  <Trash2 size={16} />
+                </button>
+              </div>
             </div>
             <Field label="YouTube Video ID (the part after v= in the URL)">
               <input className={inputClass} value={item.videoId} onChange={(e) => update(i, 'videoId', e.target.value)} />
