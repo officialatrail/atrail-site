@@ -20,6 +20,12 @@ const defaultAbout = {
   ],
 };
 
+const defaultAddIn = {
+  gifUrl: '',
+  releaseDate: '2026-07-10T12:00:00',
+  downloadUrl: 'https://github.com/officialatrail/Atrail-Excel-Addin/raw/main/Atrail%20Excel%20Addin.xll',
+};
+
 const defaultComingSoon = {
   badge: 'Coming Soon',
   title: 'Atrail AI Add-in for Excel',
@@ -47,6 +53,7 @@ const KEYS = {
   about: 'atrail_about_v1',
   pillars: 'atrail_pillars_v1',
   comingSoon: 'atrail_coming_soon_v1',
+  addIn: 'atrail_addin_v1',
   bannerDismissed: 'atrail_banner_dismissed_v1',
   likedByMe: 'atrail_liked_by_me_v1',
   myEmail: 'atrail_my_email_v1',
@@ -78,6 +85,7 @@ const cache = {
   about: loadLocal(KEYS.about, defaultAbout),
   pillars: loadLocal(KEYS.pillars, defaultPillars),
   comingSoon: loadLocal(KEYS.comingSoon, defaultComingSoon),
+  addIn: loadLocal(KEYS.addIn, defaultAddIn),
   stats: loadLocal(KEYS.stats, defaultStats),
   likes: {},
   reads: {},
@@ -133,6 +141,7 @@ export const [getVideos, saveVideos] = makeContentPair('videos', KEYS.videos);
 export const [getAbout, saveAbout] = makeContentPair('about', KEYS.about);
 export const [getPillars, savePillars] = makeContentPair('pillars', KEYS.pillars);
 export const [getComingSoon, saveComingSoon] = makeContentPair('comingSoon', KEYS.comingSoon);
+export const [getAddIn, saveAddIn] = makeContentPair('addIn', KEYS.addIn);
 export const [getStats, saveStats] = makeContentPair('stats', KEYS.stats);
 
 // Waitlist / exclusive access: writes are public (anyone can submit their email),

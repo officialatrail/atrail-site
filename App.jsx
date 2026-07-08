@@ -27,6 +27,7 @@ import Admin from './src/pages/Admin.jsx';
 import Account from './src/pages/Account.jsx';
 import PrivacyPolicy from './src/pages/PrivacyPolicy.jsx';
 import TermsOfService from './src/pages/TermsOfService.jsx';
+import AddIn from './src/pages/AddIn.jsx';
 import NotFound from './src/pages/NotFound.jsx';
 
 function AnimatedRoutes() {
@@ -65,6 +66,7 @@ function AnimatedRoutes() {
           <Route path="/articles/:slug" element={<ArticleDetail />} />
           <Route path="/videos" element={<Videos />} />
           <Route path="/about" element={<About />} />
+          <Route path="/addin" element={<AddIn />} />
           <Route path="/privacy" element={<PrivacyPolicy />} />
           <Route path="/terms" element={<TermsOfService />} />
           <Route path="*" element={<NotFound />} />

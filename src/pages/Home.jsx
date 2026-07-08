@@ -4,6 +4,7 @@ import Features from '../components/Features';
 import Stats from '../components/Stats';
 import Portfolio from '../components/Portfolio';
 import Testimonials from '../components/Testimonials';
+import AddInSection from '../components/AddInSection';
 import useDocumentHead from '../lib/useDocumentHead';
 
 export default function Home() {
@@ -20,6 +21,7 @@ export default function Home() {
         <Stats />
         <Portfolio />
         <Testimonials />
+        <AddInSection />
       </main>
     </div>
   );

@@ -17,6 +17,7 @@ import {
   getVideos, saveVideos,
   getAbout, saveAbout,
   getComingSoon, saveComingSoon,
+  getAddIn, saveAddIn,
   fetchWaitlist,
   fetchExclusiveRequests, fetchApprovedEmails, approveEmail, revokeEmail,
   fetchAllUsers,
@@ -25,7 +26,7 @@ import {
   sendUpdateEmail,
 } from '../lib/contentStore';
 
-const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users', 'Analytics'];
+const TABS = ['Articles', 'Tools', 'Prompts', 'Pillars', 'Videos', 'About', 'Stats', 'Add-in', 'Coming Soon', 'Waitlist', 'Exclusive Access', 'Users', 'Analytics'];
 
 function Field({ label, children }) {
   return (
@@ -971,6 +972,53 @@ function UsersAdmin() {
   );
 }
 
+function AddInAdmin() {
+  const [data, setData] = useState(getAddIn());
+  const update = (field, value) => setData({ ...data, [field]: value });
+  const save = () => persist(saveAddIn, data, 'Add-in settings saved');
+
+  return (
+    <div className={cardClass}>
+      <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+        Controls the Excel Add-in section shown on the homepage, Tools page, header banner, and the <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-xs">/addin</code> page.
+      </p>
+      <Field label="Release Date & Time (local time — countdown targets this)">
+        <input
+          className={inputClass}
+          type="datetime-local"
+          value={data.releaseDate?.slice(0, 16) || ''}
+          onChange={(e) => update('releaseDate', e.target.value + ':00')}
+        />
+      </Field>
+      <Field label="Download URL (.xll file link)">
+        <input
+          className={inputClass}
+          value={data.downloadUrl || ''}
+          onChange={(e) => update('downloadUrl', e.target.value)}
+          placeholder="https://github.com/..."
+        />
+      </Field>
+      <Field label="Demo GIF or image URL (shown as preview — leave blank for placeholder)">
+        <ImageUpload onUploaded={(url) => update('gifUrl', url)} />
+        <input
+          className={inputClass}
+          value={data.gifUrl || ''}
+          onChange={(e) => update('gifUrl', e.target.value)}
+          placeholder="https://... or upload above"
+        />
+        {data.gifUrl && (
+          <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700 max-w-sm">
+            <img src={data.gifUrl} alt="Preview" className="w-full" />
+          </div>
+        )}
+      </Field>
+      <button onClick={save} className={saveBtnClass}>
+        <Save size={14} /> Save
+      </button>
+    </div>
+  );
+}
+
 function AnalyticsAdmin() {
   return (
     <div className={cardClass}>
@@ -1036,6 +1084,7 @@ export default function Admin() {
             {tab === 'Videos' && <VideosAdmin />}
             {tab === 'About' && <AboutAdmin />}
             {tab === 'Stats' && <StatsAdmin />}
+            {tab === 'Add-in' && <AddInAdmin />}
             {tab === 'Coming Soon' && <ComingSoonAdmin />}
             {tab === 'Waitlist' && <WaitlistAdmin />}
             {tab === 'Exclusive Access' && <ExclusiveAdmin />}

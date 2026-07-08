@@ -4,7 +4,22 @@ import { Menu, X, Lock, Sun, Moon, ShieldCheck, LogOut, User } from 'lucide-reac
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { isBannerDismissed, dismissBanner } from '../lib/contentStore';
+import { isBannerDismissed, dismissBanner, getAddIn } from '../lib/contentStore';
+
+const ADDIN_BANNER_KEY = 'atrail_addin_banner_v1';
+
+function calcAddInCountdown(targetDate) {
+  if (!targetDate) return null;
+  const diff = new Date(targetDate) - Date.now();
+  if (diff <= 0) return { launched: true, d: 0, h: 0, m: 0, s: 0 };
+  return {
+    launched: false,
+    d: Math.floor(diff / 86400000),
+    h: Math.floor((diff % 86400000) / 3600000),
+    m: Math.floor((diff % 3600000) / 60000),
+    s: Math.floor((diff % 60000) / 1000),
+  };
+}
 
 const Header = () => {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -17,6 +32,22 @@ const Header = () => {
   const bannerRef = useRef(null);
   const [bannerHeight, setBannerHeight] = useState(52);
 
+  const addIn = getAddIn();
+  const releaseMs = addIn?.releaseDate ? new Date(addIn.releaseDate).getTime() : 0;
+  const [addInBannerDismissed, setAddInBannerDismissed] = useState(
+    () => sessionStorage.getItem(ADDIN_BANNER_KEY) === '1'
+  );
+  const [addInCountdown, setAddInCountdown] = useState(() => calcAddInCountdown(addIn?.releaseDate));
+  const nowMs = Date.now();
+  const showAddInBanner = !addInBannerDismissed && releaseMs > 0 &&
+    nowMs >= releaseMs - 14 * 86400000 && nowMs <= releaseMs + 7 * 86400000;
+
+  useEffect(() => {
+    if (!addIn?.releaseDate) return;
+    const id = setInterval(() => setAddInCountdown(calcAddInCountdown(addIn.releaseDate)), 1000);
+    return () => clearInterval(id);
+  }, [addIn?.releaseDate]);
+
   useEffect(() => {
     const handleScroll = () => setIsScrolled(window.scrollY > 20);
     window.addEventListener('scroll', handleScroll);
@@ -24,8 +55,8 @@ const Header = () => {
   }, []);
 
   useEffect(() => {
-    if (!showBanner || !bannerRef.current) return;
     const el = bannerRef.current;
+    if (!el) { setBannerHeight(0); return; }
     const update = () => setBannerHeight(el.offsetHeight);
     update();
     const ro = new ResizeObserver(update);
@@ -35,7 +66,7 @@ const Header = () => {
       ro.disconnect();
       window.removeEventListener('resize', update);
     };
-  }, [showBanner]);
+  }, [showBanner, showAddInBanner]);
 
   useEffect(() => {
     setIsMobileMenuOpen(false);
@@ -46,36 +77,80 @@ const Header = () => {
     { label: 'Videos', href: '/videos' },
     { label: 'Tools', href: '/tools', locked: true },
     { label: 'Prompts', href: '/prompts', locked: true },
+    { label: 'Add-in', href: '/addin' },
     { label: 'About', href: '/about' },
   ];
 
   return (
     <>
-      {showBanner && (
-        <motion.div
-          ref={bannerRef}
-          className="fixed top-0 left-0 right-0 z-[60] text-white overflow-hidden"
-          style={{ background: 'linear-gradient(90deg, #055430 0%, #0a9650 50%, #067C40 100%)' }}
-          initial={{ y: -60 }}
-          animate={{ y: 0 }}
-          transition={{ duration: 0.5 }}
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-center gap-3 text-center relative">
-            <span className="font-rubik text-sm sm:text-base font-medium">
-              Join the Atrail community to unlock tools and prompts{' '}
-              <Link to="/login" className="inline-flex items-center gap-1 underline font-bold hover:text-brand-100">
-                Sign in free
-              </Link>
-            </span>
-            <button
-              onClick={() => { dismissBanner(); setBannerDismissed(true); }}
-              className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
-              aria-label="Dismiss"
+      {(showAddInBanner || showBanner) && (
+        <div ref={bannerRef} className="fixed top-0 left-0 right-0 z-[60]">
+          {showAddInBanner && (
+            <motion.div
+              className="text-white overflow-hidden"
+              style={{ background: 'linear-gradient(90deg, #09090b 0%, #111827 50%, #09090b 100%)', borderBottom: '1px solid rgba(34,217,122,0.2)' }}
+              initial={{ y: -40 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.5 }}
             >
-              <X size={15} />
-            </button>
-          </div>
-        </motion.div>
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 text-center relative">
+                {addInCountdown?.launched ? (
+                  <span className="font-rubik text-sm font-medium text-zinc-100">
+                    <span className="text-brand-400 font-bold">Atrail AI for Excel is live</span> — free for all members{' '}
+                    <Link to="/addin" className="text-brand-400 underline font-bold hover:text-brand-300 ml-1">
+                      Download now →
+                    </Link>
+                  </span>
+                ) : (
+                  <span className="font-rubik text-sm font-medium text-zinc-300 inline-flex items-center gap-3 flex-wrap justify-center">
+                    <span className="text-brand-400 font-bold">Atrail AI for Excel</span>
+                    <span>
+                      launching in{' '}
+                      <span className="font-bold text-white tabular-nums">
+                        {addInCountdown?.d}d {String(addInCountdown?.h ?? 0).padStart(2,'0')}h {String(addInCountdown?.m ?? 0).padStart(2,'0')}m {String(addInCountdown?.s ?? 0).padStart(2,'0')}s
+                      </span>
+                    </span>
+                    <Link to="/addin" className="text-brand-400 underline font-semibold hover:text-brand-300">
+                      Learn more →
+                    </Link>
+                  </span>
+                )}
+                <button
+                  onClick={() => { sessionStorage.setItem(ADDIN_BANNER_KEY, '1'); setAddInBannerDismissed(true); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-zinc-500 hover:text-zinc-300 transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+          {showBanner && (
+            <motion.div
+              className="text-white overflow-hidden"
+              style={{ background: 'linear-gradient(90deg, #055430 0%, #0a9650 50%, #067C40 100%)' }}
+              initial={{ y: -60 }}
+              animate={{ y: 0 }}
+              transition={{ duration: 0.5, delay: showAddInBanner ? 0.1 : 0 }}
+            >
+              <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex items-center justify-center gap-3 text-center relative">
+                <span className="font-rubik text-sm sm:text-base font-medium">
+                  Join the Atrail community to unlock tools and prompts{' '}
+                  <Link to="/login" className="inline-flex items-center gap-1 underline font-bold hover:text-brand-100">
+                    Sign in free
+                  </Link>
+                </span>
+                <button
+                  onClick={() => { dismissBanner(); setBannerDismissed(true); }}
+                  className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white transition-colors"
+                  aria-label="Dismiss"
+                >
+                  <X size={15} />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </div>
       )}
     <motion.header
       className={`fixed left-0 right-0 z-50 transition-all duration-300 ${

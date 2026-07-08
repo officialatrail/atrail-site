@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, CheckCircle, X } from 'lucide-react';
+import { X } from 'lucide-react';
 import ToolCard from '../components/ToolCard';
 import SearchSortBar from '../components/SearchSortBar';
-import { getTools, getComingSoon, joinWaitlist, getLikeCount } from '../lib/contentStore';
+import { getTools, getLikeCount } from '../lib/contentStore';
+import AddInSection from '../components/AddInSection';
 import { platforms } from '../lib/platformIcons';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
@@ -24,7 +25,6 @@ export default function Tools() {
   const [activePlatform, setActivePlatform] = useState('All');
   const [search, setSearch] = useState('');
   const tools = getTools();
-  const comingSoon = getComingSoon();
   const toolPlatforms = ['All', ...new Set(tools.map((t) => t.platform).filter(Boolean))];
   const [sortBy, setSortBy] = useState('recent');
   const filtered = tools
@@ -43,21 +43,6 @@ export default function Tools() {
     .map(({ t }) => t);
   const [activeVideo, setActiveVideo] = useState(null);
 
-  const [email, setEmail] = useState('');
-  const [joined, setJoined] = useState(false);
-  const [honeypot, setHoneypot] = useState('');
-
-  const handleJoin = async (e) => {
-    e.preventDefault();
-    if (!email || honeypot) return;
-    try {
-      await joinWaitlist(email);
-      setJoined(true);
-      setEmail('');
-    } catch {
-      // keep the form visible so they can retry
-    }
-  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -136,68 +121,10 @@ export default function Tools() {
             </AnimatePresence>
           </motion.div>
 
-          <motion.div
-            className="mt-20 rounded-3xl p-10 sm:p-14 border border-brand-100 dark:border-zinc-800 bg-gradient-to-br from-[#eafbf1] to-white dark:from-zinc-900 dark:to-zinc-950"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.8 }}
-          >
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-              <div>
-                <span className="font-rubik text-xs font-bold text-brand-600 dark:text-brand-400">
-                  {comingSoon.badge}
-                </span>
-                <h2 className="mt-4 text-3xl sm:text-4xl font-bold text-zinc-900 dark:text-white">{comingSoon.title}</h2>
-                <p className="mt-5 text-zinc-600 dark:text-zinc-400 leading-relaxed">{comingSoon.description}</p>
-              </div>
-              <div className="flex flex-col gap-4">
-                {comingSoon.features.map((f) => (
-                  <div key={f} className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300">
-                    <span className="mt-0.5 w-4 h-4 rounded-full flex items-center justify-center shrink-0 bg-brand-100 dark:bg-brand-900/40">
-                      <span className="w-1.5 h-1.5 rounded-full bg-brand-600 dark:bg-brand-400" />
-                    </span>
-                    {f}
-                  </div>
-                ))}
-
-                {joined ? (
-                  <div className="mt-2 inline-flex items-center gap-2 text-brand-600 dark:text-brand-400 font-semibold text-sm">
-                    <CheckCircle size={16} /> You're on the waitlist
-                  </div>
-                ) : (
-                  <form onSubmit={handleJoin} className="mt-2 flex flex-col sm:flex-row gap-2">
-                    <input
-                      type="text"
-                      name="company"
-                      value={honeypot}
-                      onChange={(e) => setHoneypot(e.target.value)}
-                      tabIndex={-1}
-                      autoComplete="off"
-                      className="absolute -left-[9999px] w-px h-px opacity-0"
-                      aria-hidden="true"
-                    />
-                    <input
-                      type="email"
-                      required
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="Your email"
-                      className="px-4 py-2.5 rounded-full border border-slate-200 dark:border-zinc-700 dark:bg-zinc-800 dark:text-white text-sm focus:outline-none focus:ring-2 focus:ring-brand-500 flex-1"
-                    />
-                    <button
-                      type="submit"
-                      className="inline-flex items-center justify-center gap-2 bg-brand-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all duration-200 w-fit"
-                    >
-                      Join the Waitlist <ArrowRight size={14} />
-                    </button>
-                  </form>
-                )}
-              </div>
-            </div>
-          </motion.div>
         </div>
       </main>
+
+      <AddInSection />
 
       {activeVideo && (
         <motion.div
