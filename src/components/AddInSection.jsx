@@ -22,13 +22,32 @@ function calcCountdown(targetDate) {
 function Tile({ value, label }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-14 h-14 rounded-xl bg-zinc-900 dark:bg-zinc-800 flex items-center justify-center">
-        <span className="font-display text-xl font-bold text-white tabular-nums">{String(value).padStart(2, '0')}</span>
+      <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center">
+        <span className="font-display text-xl font-bold text-zinc-900 tabular-nums">{String(value).padStart(2, '0')}</span>
       </div>
-      <span className="mt-1.5 text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{label}</span>
+      <span className="mt-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">{label}</span>
     </div>
   );
 }
+
+const FEATURES = [
+  {
+    title: 'Any AI you want',
+    desc: 'Claude, GPT-4, DeepSeek, Grok, Gemini, or OpenRouter for dozens of models with one login.',
+  },
+  {
+    title: 'Ask in plain English',
+    desc: 'Sort, clean, build pivot tables, write formulas, and analyse data without writing a single formula.',
+  },
+  {
+    title: 'Stays inside Excel',
+    desc: 'The chat panel lives in Excel\'s ribbon. No browser, no copy-paste, no switching apps.',
+  },
+  {
+    title: 'Your keys, your data',
+    desc: 'API keys are encrypted on your machine using Windows DPAPI. Nothing is stored by Atrail.',
+  },
+];
 
 export default function AddInSection() {
   const { isAuthenticated } = useAuth();
@@ -43,8 +62,7 @@ export default function AddInSection() {
   const launched = countdown?.launched ?? false;
 
   return (
-    <section className="py-24 bg-zinc-950 dark:bg-zinc-950 relative overflow-hidden">
-      {/* subtle grid bg */}
+    <section className="py-24 bg-zinc-950 relative overflow-hidden">
       <div
         className="absolute inset-0 opacity-[0.04]"
         style={{
@@ -53,9 +71,9 @@ export default function AddInSection() {
         }}
       />
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-14 items-center">
 
-          {/* Left: text + CTA */}
+          {/* Left */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -63,28 +81,26 @@ export default function AddInSection() {
             transition={{ duration: 0.8 }}
           >
             <span className="inline-block font-rubik text-xs font-bold px-3 py-1 rounded-full bg-brand-600 text-white mb-5">
-              {launched ? 'Live Now — Free for all members' : 'Launching Friday at 12pm'}
+              {launched ? 'Live Now, Free for all members' : 'Launching July 10 at 12pm'}
             </span>
-            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4">
-              Atrail AI <Highlight>for Excel</Highlight>
+
+            <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
+              Like Claude for Excel.<br />
+              <Highlight>But use any AI.</Highlight>
             </h2>
-            <p className="font-rubik text-zinc-400 leading-relaxed mb-6">
-              An AI assistant built directly into Excel. Ask it to sort, clean, analyse, build pivot tables, and add formulas — all in plain English. Supports Claude, GPT-4, DeepSeek, Grok, and more.
+            <p className="font-rubik text-zinc-400 leading-relaxed mb-8">
+              Atrail AI for Excel puts a full AI chat panel directly inside Excel's ribbon. Connect any provider you already have, or use OpenRouter to access dozens of models with a single login. No vendor lock-in, no switching apps.
             </p>
 
-            <ul className="space-y-2 mb-8">
-              {[
-                'Ask in plain English inside Excel',
-                'Six AI providers — use the one you already have',
-                'Lives in the ribbon, no browser switching',
-                'Free for all Atrail members',
-              ].map((f) => (
-                <li key={f} className="flex items-center gap-2.5 text-sm text-zinc-300 font-rubik">
-                  <span className="w-1.5 h-1.5 rounded-full bg-brand-400 shrink-0" />
-                  {f}
-                </li>
+            {/* Feature boxes */}
+            <div className="grid grid-cols-2 gap-3 mb-8">
+              {FEATURES.map((f) => (
+                <div key={f.title} className="rounded-xl bg-brand-600 p-4">
+                  <p className="font-display text-sm font-bold text-white mb-1">{f.title}</p>
+                  <p className="font-rubik text-xs text-brand-100 leading-relaxed">{f.desc}</p>
+                </div>
               ))}
-            </ul>
+            </div>
 
             {launched ? (
               isAuthenticated ? (
@@ -109,7 +125,7 @@ export default function AddInSection() {
                     to="/login"
                     className="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all shadow-lg"
                   >
-                    <Lock size={15} /> Sign in to download — free
+                    <Lock size={15} /> Sign in to download free
                   </Link>
                   <Link
                     to="/addin"
@@ -129,9 +145,9 @@ export default function AddInSection() {
             )}
           </motion.div>
 
-          {/* Right: countdown or GIF */}
+          {/* Right: countdown + phone preview */}
           <motion.div
-            className="flex flex-col items-center lg:items-end gap-8"
+            className="flex flex-col items-center gap-8"
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
@@ -140,24 +156,34 @@ export default function AddInSection() {
             {!launched && (
               <div className="flex items-start gap-3 sm:gap-4">
                 <Tile value={countdown?.d ?? 0} label="Days" />
-                <div className="text-2xl font-bold text-zinc-600 mt-3">:</div>
+                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
                 <Tile value={countdown?.h ?? 0} label="Hours" />
-                <div className="text-2xl font-bold text-zinc-600 mt-3">:</div>
+                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
                 <Tile value={countdown?.m ?? 0} label="Mins" />
-                <div className="text-2xl font-bold text-zinc-600 mt-3">:</div>
+                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
                 <Tile value={countdown?.s ?? 0} label="Secs" />
               </div>
             )}
 
-            <div className="w-full max-w-md rounded-2xl overflow-hidden border border-zinc-800 bg-zinc-900 aspect-video flex items-center justify-center">
-              {addIn.gifUrl ? (
-                <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
-              ) : (
-                <div className="text-center">
-                  <div className="text-4xl mb-3">📊</div>
-                  <p className="font-rubik text-zinc-500 text-xs">Demo preview coming soon</p>
+            {/* Phone mockup */}
+            <div className="relative" style={{ width: '200px', aspectRatio: '9/16' }}>
+              <div className="absolute inset-0 rounded-[2.8rem] bg-zinc-900 border-[5px] border-zinc-700 shadow-2xl shadow-brand-900/30 overflow-hidden">
+                {/* notch */}
+                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-14 h-[5px] bg-zinc-700 rounded-full z-10" />
+                {/* screen */}
+                <div className="absolute inset-2 rounded-[2.2rem] overflow-hidden bg-zinc-800">
+                  {addIn.gifUrl ? (
+                    <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-zinc-900 to-zinc-800">
+                      <div className="text-3xl">📊</div>
+                      <p className="font-rubik text-zinc-500 text-[10px] text-center px-4">Demo preview coming soon</p>
+                    </div>
+                  )}
                 </div>
-              )}
+                {/* home bar */}
+                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 w-16 h-[3px] bg-zinc-600 rounded-full" />
+              </div>
             </div>
           </motion.div>
 

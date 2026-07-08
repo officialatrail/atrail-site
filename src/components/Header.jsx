@@ -96,7 +96,7 @@ const Header = () => {
               <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5 flex items-center justify-center gap-3 text-center relative">
                 {addInCountdown?.launched ? (
                   <span className="font-rubik text-sm font-medium text-zinc-100">
-                    <span className="text-brand-400 font-bold">Atrail AI for Excel is live</span> — free for all members{' '}
+                    <span className="text-brand-400 font-bold">Atrail AI for Excel is live</span>{' '}free for all members{' '}
                     <Link to="/addin" className="text-brand-400 underline font-bold hover:text-brand-300 ml-1">
                       Download now →
                     </Link>
@@ -158,7 +158,7 @@ const Header = () => {
           ? 'bg-white/80 dark:bg-zinc-950/80 backdrop-blur-xl shadow-lg border-b border-zinc-100 dark:border-zinc-800/60'
           : 'bg-transparent'
       }`}
-      style={{ top: showBanner ? bannerHeight : 0 }}
+      style={{ top: (showAddInBanner || showBanner) ? bannerHeight : 0 }}
       initial={{ y: -100 }}
       animate={{ y: 0 }}
       transition={{ duration: 0.6 }}
