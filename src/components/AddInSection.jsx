@@ -95,9 +95,9 @@ export default function AddInSection() {
             {/* Feature boxes */}
             <div className="grid grid-cols-2 gap-3 mb-8">
               {FEATURES.map((f) => (
-                <div key={f.title} className="rounded-xl bg-brand-600 p-4">
-                  <p className="font-display text-sm font-bold text-white mb-1">{f.title}</p>
-                  <p className="font-rubik text-xs text-brand-100 leading-relaxed">{f.desc}</p>
+                <div key={f.title} className="rounded-xl bg-brand-600 p-5">
+                  <p className="font-display text-base font-bold text-white mb-2">{f.title}</p>
+                  <p className="font-rubik text-sm text-brand-100 leading-relaxed">{f.desc}</p>
                 </div>
               ))}
             </div>
@@ -165,25 +165,16 @@ export default function AddInSection() {
               </div>
             )}
 
-            {/* Phone mockup */}
-            <div className="relative" style={{ width: '200px', aspectRatio: '9/16' }}>
-              <div className="absolute inset-0 rounded-[2.8rem] bg-zinc-900 border-[5px] border-zinc-700 shadow-2xl shadow-brand-900/30 overflow-hidden">
-                {/* notch */}
-                <div className="absolute top-3 left-1/2 -translate-x-1/2 w-14 h-[5px] bg-zinc-700 rounded-full z-10" />
-                {/* screen */}
-                <div className="absolute inset-2 rounded-[2.2rem] overflow-hidden bg-zinc-800">
-                  {addIn.gifUrl ? (
-                    <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
-                  ) : (
-                    <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-zinc-900 to-zinc-800">
-                      <div className="text-3xl">📊</div>
-                      <p className="font-rubik text-zinc-500 text-[10px] text-center px-4">Demo preview coming soon</p>
-                    </div>
-                  )}
+            {/* Preview */}
+            <div className="rounded-3xl overflow-hidden border border-zinc-700 shadow-2xl shadow-brand-900/20" style={{ width: '260px', aspectRatio: '9/16' }}>
+              {addIn.gifUrl ? (
+                <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
+              ) : (
+                <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-zinc-900 to-zinc-800">
+                  <div className="text-4xl">📊</div>
+                  <p className="font-rubik text-zinc-500 text-xs text-center px-6">Demo preview coming soon</p>
                 </div>
-                {/* home bar */}
-                <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 w-16 h-[3px] bg-zinc-600 rounded-full" />
-              </div>
+              )}
             </div>
           </motion.div>
 

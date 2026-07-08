@@ -154,30 +154,24 @@ export default function AddIn() {
           )}
         </div>
 
-        {/* Phone preview */}
-        <div className="max-w-xs mx-auto px-4 sm:px-6 lg:px-8 mb-20">
+        {/* Preview */}
+        <div className="max-w-sm mx-auto px-4 sm:px-6 lg:px-8 mb-20" style={{ maxWidth: '360px' }}>
           <motion.div
-            className="relative"
+            className="rounded-3xl overflow-hidden border border-slate-200 dark:border-zinc-700 bg-zinc-900 shadow-2xl"
             style={{ aspectRatio: '9/16' }}
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7 }}
           >
-            <div className="absolute inset-0 rounded-[2.8rem] bg-zinc-900 dark:bg-zinc-800 border-[5px] border-zinc-700 shadow-2xl shadow-brand-900/20 overflow-hidden">
-              <div className="absolute top-3 left-1/2 -translate-x-1/2 w-14 h-[5px] bg-zinc-700 rounded-full z-10" />
-              <div className="absolute inset-2 rounded-[2.2rem] overflow-hidden bg-zinc-800 dark:bg-zinc-900">
-                {addIn.gifUrl ? (
-                  <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
-                ) : (
-                  <div className="w-full h-full flex flex-col items-center justify-center gap-3 bg-gradient-to-b from-zinc-900 to-zinc-800">
-                    <div className="text-4xl">📊</div>
-                    <p className="font-rubik text-zinc-500 text-xs text-center px-6">Demo preview coming soon</p>
-                  </div>
-                )}
+            {addIn.gifUrl ? (
+              <img src={addIn.gifUrl} alt="Atrail AI for Excel demo" className="w-full h-full object-cover" />
+            ) : (
+              <div className="w-full h-full flex flex-col items-center justify-center gap-4 bg-gradient-to-b from-zinc-900 to-zinc-800">
+                <div className="text-5xl">📊</div>
+                <p className="font-rubik text-zinc-500 text-sm text-center px-8">Demo preview coming soon</p>
               </div>
-              <div className="absolute bottom-2.5 left-1/2 -translate-x-1/2 w-16 h-[3px] bg-zinc-600 rounded-full" />
-            </div>
+            )}
           </motion.div>
         </div>
 
@@ -192,8 +186,8 @@ export default function AddIn() {
           >
             {FEATURES.map(({ title, desc }) => (
               <div key={title} className="bg-brand-600 rounded-2xl p-6 shadow-sm">
-                <h3 className="font-display font-bold text-white mb-2 text-sm">{title}</h3>
-                <p className="font-rubik text-xs text-brand-100 leading-relaxed">{desc}</p>
+                <h3 className="font-display font-bold text-white mb-3 text-xl">{title}</h3>
+                <p className="font-rubik text-sm text-brand-100 leading-relaxed">{desc}</p>
               </div>
             ))}
           </motion.div>
