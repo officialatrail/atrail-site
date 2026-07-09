@@ -24,12 +24,12 @@ function calcCountdown(targetDate) {
 function CountdownBox({ value, label }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center">
-        <span className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white dark:text-zinc-900 tabular-nums">
+      <div className="w-20 h-20 md:w-24 md:h-24 rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center">
+        <span className="font-display text-3xl md:text-4xl font-bold text-white dark:text-zinc-900 tabular-nums">
           {String(value).padStart(2, '0')}
         </span>
       </div>
-      <span className="mt-1.5 text-[10px] sm:text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{label}</span>
+      <span className="mt-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{label}</span>
     </div>
   );
 }
@@ -125,13 +125,33 @@ export default function AddIn() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <p className="font-rubik text-sm font-semibold text-zinc-500 dark:text-zinc-400 mb-6 uppercase tracking-wider">Launching July 10 at 12pm</p>
-              <div className="flex items-start gap-1.5 sm:gap-3 md:gap-6">
+              {/* Mobile: 2×2 grid */}
+              <div className="sm:hidden grid grid-cols-2 gap-4 w-full max-w-[280px]">
+                {[
+                  { v: countdown?.d ?? 0, l: 'Days' },
+                  { v: countdown?.h ?? 0, l: 'Hours' },
+                  { v: countdown?.m ?? 0, l: 'Mins' },
+                  { v: countdown?.s ?? 0, l: 'Secs' },
+                ].map(({ v, l }) => (
+                  <div key={l} className="flex flex-col items-center gap-2">
+                    <div className="w-full aspect-square rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center">
+                      <span className="font-display text-4xl font-bold text-white dark:text-zinc-900 tabular-nums">
+                        {String(v).padStart(2, '0')}
+                      </span>
+                    </div>
+                    <span className="text-[10px] font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{l}</span>
+                  </div>
+                ))}
+              </div>
+
+              {/* sm+: horizontal row with colons */}
+              <div className="hidden sm:flex items-start gap-3 md:gap-6">
                 <CountdownBox value={countdown?.d ?? 0} label="Days" />
-                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
+                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
                 <CountdownBox value={countdown?.h ?? 0} label="Hours" />
-                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
+                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
                 <CountdownBox value={countdown?.m ?? 0} label="Mins" />
-                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
+                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
                 <CountdownBox value={countdown?.s ?? 0} label="Secs" />
               </div>
 
