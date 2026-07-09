@@ -23,10 +23,10 @@ function calcCountdown(targetDate) {
 function Tile({ value, label }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-14 h-14 rounded-xl bg-white flex items-center justify-center">
-        <span className="font-display text-xl font-bold text-zinc-900 tabular-nums">{String(value).padStart(2, '0')}</span>
+      <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-lg sm:rounded-xl bg-white flex items-center justify-center">
+        <span className="font-display text-base sm:text-xl font-bold text-zinc-900 tabular-nums">{String(value).padStart(2, '0')}</span>
       </div>
-      <span className="mt-1.5 text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">{label}</span>
+      <span className="mt-1 text-[9px] sm:text-[10px] font-semibold text-zinc-400 uppercase tracking-wider">{label}</span>
     </div>
   );
 }
@@ -199,13 +199,13 @@ export default function AddInSection() {
             transition={{ duration: 0.8 }}
           >
             {!effectiveLaunched && (
-              <div className="flex items-start gap-3 sm:gap-4">
+              <div className="flex items-start gap-1.5 sm:gap-3">
                 <Tile value={countdown?.d ?? 0} label="Days" />
-                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
+                <div className="text-base sm:text-2xl font-bold text-zinc-400 mt-[10px] sm:mt-3">:</div>
                 <Tile value={countdown?.h ?? 0} label="Hours" />
-                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
+                <div className="text-base sm:text-2xl font-bold text-zinc-400 mt-[10px] sm:mt-3">:</div>
                 <Tile value={countdown?.m ?? 0} label="Mins" />
-                <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>
+                <div className="text-base sm:text-2xl font-bold text-zinc-400 mt-[10px] sm:mt-3">:</div>
                 <Tile value={countdown?.s ?? 0} label="Secs" />
               </div>
             )}

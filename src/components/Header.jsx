@@ -110,8 +110,11 @@ const Header = () => {
                         {addInCountdown?.d}d {String(addInCountdown?.h ?? 0).padStart(2,'0')}h {String(addInCountdown?.m ?? 0).padStart(2,'0')}m {String(addInCountdown?.s ?? 0).padStart(2,'0')}s
                       </span>
                     </span>
-                    <Link to="/addin" className="text-brand-400 underline font-semibold hover:text-brand-300">
-                      Learn more →
+                    <Link
+                      to="/addin"
+                      className="inline-flex items-center gap-1 bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold px-3 py-1 rounded-full transition-colors"
+                    >
+                      Request Early Access →
                     </Link>
                   </span>
                 )}

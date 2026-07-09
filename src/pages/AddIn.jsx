@@ -24,12 +24,12 @@ function calcCountdown(targetDate) {
 function CountdownBox({ value, label }) {
   return (
     <div className="flex flex-col items-center">
-      <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center">
-        <span className="font-display text-3xl sm:text-4xl font-bold text-white dark:text-zinc-900 tabular-nums">
+      <div className="w-14 h-14 sm:w-20 sm:h-20 md:w-24 md:h-24 rounded-xl sm:rounded-2xl bg-zinc-900 dark:bg-white flex items-center justify-center">
+        <span className="font-display text-2xl sm:text-3xl md:text-4xl font-bold text-white dark:text-zinc-900 tabular-nums">
           {String(value).padStart(2, '0')}
         </span>
       </div>
-      <span className="mt-2 text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{label}</span>
+      <span className="mt-1.5 text-[10px] sm:text-xs font-semibold text-zinc-500 dark:text-zinc-400 uppercase tracking-wider">{label}</span>
     </div>
   );
 }
@@ -82,8 +82,9 @@ export default function AddIn() {
       await requestAddinEarlyAccess(userEmail);
       setEarlyStatus('pending');
       toast.success('Request submitted! We will review it shortly.');
-    } catch {
-      toast.error('Could not submit request. Please try again.');
+    } catch (err) {
+      console.error('Early access request error:', err);
+      toast.error(err?.message ?? 'Could not submit request. Please try again.');
     } finally {
       setRequesting(false);
     }
@@ -124,42 +125,53 @@ export default function AddIn() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <p className="font-rubik text-sm font-semibold text-zinc-500 dark:text-zinc-400 mb-6 uppercase tracking-wider">Launching July 10 at 12pm</p>
-              <div className="flex items-start gap-4 sm:gap-6">
+              <div className="flex items-start gap-1.5 sm:gap-3 md:gap-6">
                 <CountdownBox value={countdown?.d ?? 0} label="Days" />
-                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
+                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
                 <CountdownBox value={countdown?.h ?? 0} label="Hours" />
-                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
+                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
                 <CountdownBox value={countdown?.m ?? 0} label="Mins" />
-                <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
+                <div className="text-xl sm:text-3xl font-bold text-zinc-400 mt-[14px] sm:mt-[18px] md:mt-5">:</div>
                 <CountdownBox value={countdown?.s ?? 0} label="Secs" />
               </div>
 
-              {/* Early access request */}
-              <div className="mt-10 flex flex-col items-center gap-3">
+              {/* Early access card */}
+              <motion.div
+                className="mt-12 w-full max-w-md bg-zinc-50 dark:bg-zinc-900 rounded-3xl border border-zinc-200 dark:border-zinc-800 p-8 text-center shadow-sm"
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+              >
+                <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-2">
+                  Want in before launch?
+                </h2>
+                <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-7 leading-relaxed">
+                  Request early access and we will review your request. Approved members get the full download and installation guide before July 10.
+                </p>
                 {!isAuthenticated ? (
                   <Link
                     to="/login"
-                    className="inline-flex items-center gap-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-6 py-3 rounded-full font-semibold text-sm hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-all"
+                    className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-bold text-base hover:bg-brand-700 transition-all shadow-lg hover:shadow-xl"
                   >
-                    <Lock size={14} /> Sign in to request early access
+                    <Lock size={16} /> Sign in to request early access
                   </Link>
                 ) : earlyStatus === 'pending' ? (
-                  <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-sm font-medium">
-                    <Clock size={14} /> Request submitted, awaiting approval
+                  <div className="inline-flex items-center gap-2 px-7 py-4 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 font-semibold text-sm">
+                    <Clock size={15} /> Request submitted, awaiting approval
                   </div>
                 ) : earlyStatus === 'rejected' ? (
-                  <p className="text-sm text-zinc-400 dark:text-zinc-500">Early access request was not approved.</p>
+                  <p className="font-rubik text-sm text-zinc-400 dark:text-zinc-500">Early access request was not approved.</p>
                 ) : (
                   <button
                     onClick={handleRequest}
                     disabled={requesting}
-                    className="inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-3 rounded-full font-semibold text-sm hover:opacity-80 transition-all disabled:opacity-50"
+                    className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-bold text-base hover:bg-brand-700 transition-all shadow-lg hover:shadow-xl disabled:opacity-50"
                   >
                     {requesting ? 'Submitting...' : 'Request Early Access'}
                   </button>
                 )}
-                <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500">Free for everyone · Sign in to request early access</p>
-              </div>
+                <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-4">Free for everyone · Limited spots before launch</p>
+              </motion.div>
             </motion.div>
           ) : (
             <motion.div
