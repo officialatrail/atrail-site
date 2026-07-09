@@ -166,6 +166,7 @@ export async function requestExclusiveAccess(email) {
     .from('exclusive_requests')
     .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
   if (error) throw error;
+  sendNotification({ type: 'exclusive_access_request', userEmail: email, productName: 'Atrail Exclusive Prompts' });
 }
 
 export async function fetchExclusiveRequests() {
@@ -219,6 +220,7 @@ export async function requestAddinEarlyAccess(email) {
     .from('addin_early_access')
     .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
   if (error) throw error;
+  sendNotification({ type: 'early_access_request', userEmail: email, productName: 'Atrail AI for Excel Add-in' });
 }
 
 export async function getMyEarlyAccessStatus() {
@@ -239,6 +241,14 @@ export async function fetchEarlyAccessRequests() {
 export async function setEarlyAccessStatus(id, status) {
   const { error } = await supabase.rpc('set_early_access_status', { p_id: id, p_status: status });
   if (error) throw error;
+}
+
+export async function sendNotification({ type, userEmail, productName }) {
+  try {
+    await supabase.functions.invoke('send-notification', {
+      body: { type, userEmail, productName },
+    });
+  } catch {}
 }
 
 export async function isMyEmailApproved() {

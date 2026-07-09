@@ -19,6 +19,7 @@ import {
   getComingSoon, saveComingSoon,
   getAddIn, saveAddIn,
   fetchEarlyAccessRequests, setEarlyAccessStatus,
+  sendNotification,
   fetchWaitlist,
   fetchExclusiveRequests, fetchApprovedEmails, approveEmail, revokeEmail,
   fetchAllUsers,
@@ -822,7 +823,8 @@ function ExclusiveAdmin() {
   const approve = async (email) => {
     try {
       await approveEmail(email);
-      toast.success(`${email} can now view exclusive prompts`);
+      sendNotification({ type: 'exclusive_access_approved', userEmail: email, productName: 'Atrail Exclusive Prompts' });
+      toast.success(`${email} approved — email sent`);
       reload();
     } catch {
       toast.error('Could not approve - try again.');
@@ -902,7 +904,8 @@ function UsersAdmin() {
   const approve = async (email) => {
     try {
       await approveEmail(email);
-      toast.success(`${email} can now view exclusive prompts`);
+      sendNotification({ type: 'exclusive_access_approved', userEmail: email, productName: 'Atrail Exclusive Prompts' });
+      toast.success(`${email} approved — email sent`);
       reload();
     } catch {
       toast.error('Could not approve - try again.');
@@ -997,8 +1000,12 @@ function AddInAdmin() {
   const handleStatus = async (id, status) => {
     try {
       await setEarlyAccessStatus(id, status);
+      if (status === 'approved') {
+        const req = requests.find((r) => r.id === id);
+        if (req) sendNotification({ type: 'early_access_approved', userEmail: req.email, productName: 'Atrail AI for Excel Add-in' });
+      }
       setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
-      toast.success(status === 'approved' ? 'Approved' : 'Rejected');
+      toast.success(status === 'approved' ? 'Approved — email sent to user' : 'Rejected');
     } catch {
       toast.error('Could not update status');
     }
