@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Download, Lock, ArrowRight } from 'lucide-react';
+import { Download, Lock, ArrowRight, Clock } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
-import { getAddIn } from '../lib/contentStore';
+import { getAddIn, requestAddinEarlyAccess, getMyEarlyAccessStatus } from '../lib/contentStore';
 import Highlight from './Highlight';
 
 function calcCountdown(targetDate) {
@@ -50,16 +51,38 @@ const FEATURES = [
 ];
 
 export default function AddInSection() {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userEmail } = useAuth();
   const addIn = getAddIn();
   const [countdown, setCountdown] = useState(() => calcCountdown(addIn.releaseDate));
+  const [earlyStatus, setEarlyStatus] = useState(null);
+  const [requesting, setRequesting] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setCountdown(calcCountdown(addIn.releaseDate)), 1000);
     return () => clearInterval(id);
   }, [addIn.releaseDate]);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    getMyEarlyAccessStatus().then((s) => setEarlyStatus(s));
+  }, [isAuthenticated]);
+
   const launched = countdown?.launched ?? false;
+  const effectiveLaunched = launched || earlyStatus === 'approved';
+
+  const handleRequest = async () => {
+    if (!userEmail) return;
+    setRequesting(true);
+    try {
+      await requestAddinEarlyAccess(userEmail);
+      setEarlyStatus('pending');
+      toast.success('Request submitted!');
+    } catch {
+      toast.error('Could not submit. Try again.');
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   return (
     <section className="py-24 bg-zinc-950 relative overflow-hidden">
@@ -81,7 +104,7 @@ export default function AddInSection() {
             transition={{ duration: 0.8 }}
           >
             <span className="inline-block font-rubik text-xs font-bold px-3 py-1 rounded-full bg-brand-600 text-white mb-5">
-              {launched ? 'Live Now, Free for all members' : 'Launching July 10 at 12pm'}
+              {effectiveLaunched && !launched ? 'Early Access' : launched ? 'Live Now, Free for all members' : 'Launching July 10 at 12pm'}
             </span>
 
             <h2 className="font-display text-3xl sm:text-4xl font-bold text-white mb-4 leading-tight">
@@ -102,7 +125,7 @@ export default function AddInSection() {
               ))}
             </div>
 
-            {launched ? (
+            {effectiveLaunched ? (
               isAuthenticated ? (
                 <div className="flex flex-col sm:flex-row gap-3">
                   <a
@@ -136,12 +159,34 @@ export default function AddInSection() {
                 </div>
               )
             ) : (
-              <Link
-                to="/addin"
-                className="inline-flex items-center gap-1.5 text-brand-400 hover:text-brand-300 font-semibold text-sm transition-colors"
-              >
-                See what's coming <ArrowRight size={14} />
-              </Link>
+              <div className="flex flex-col gap-3">
+                <Link
+                  to="/addin"
+                  className="inline-flex items-center gap-1.5 text-brand-400 hover:text-brand-300 font-semibold text-sm transition-colors"
+                >
+                  See what's coming <ArrowRight size={14} />
+                </Link>
+                {/* Compact early access request */}
+                {!isAuthenticated ? (
+                  <Link to="/login" className="inline-flex items-center gap-1.5 text-zinc-400 hover:text-zinc-200 text-xs transition-colors">
+                    <Lock size={11} /> Sign in to request early access
+                  </Link>
+                ) : earlyStatus === 'pending' ? (
+                  <span className="inline-flex items-center gap-1.5 text-zinc-400 text-xs">
+                    <Clock size={11} /> Early access request submitted
+                  </span>
+                ) : earlyStatus === 'rejected' ? (
+                  <span className="text-xs text-zinc-500">Early access not approved.</span>
+                ) : earlyStatus === null && isAuthenticated ? (
+                  <button
+                    onClick={handleRequest}
+                    disabled={requesting}
+                    className="inline-flex items-center gap-1.5 text-zinc-200 hover:text-white text-xs font-semibold underline underline-offset-2 transition-colors disabled:opacity-50"
+                  >
+                    {requesting ? 'Submitting...' : 'Request early access'}
+                  </button>
+                ) : null}
+              </div>
             )}
           </motion.div>
 
@@ -153,7 +198,7 @@ export default function AddInSection() {
             viewport={{ once: true }}
             transition={{ duration: 0.8 }}
           >
-            {!launched && (
+            {!effectiveLaunched && (
               <div className="flex items-start gap-3 sm:gap-4">
                 <Tile value={countdown?.d ?? 0} label="Days" />
                 <div className="text-2xl font-bold text-zinc-400 mt-3">:</div>

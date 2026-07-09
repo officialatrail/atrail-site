@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Download, Lock, CheckCircle, ChevronRight, ExternalLink } from 'lucide-react';
+import { Download, Lock, CheckCircle, ChevronRight, ExternalLink, Clock } from 'lucide-react';
+import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
-import { getAddIn } from '../lib/contentStore';
+import { getAddIn, requestAddinEarlyAccess, getMyEarlyAccessStatus } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 
@@ -55,16 +56,38 @@ export default function AddIn() {
     'An AI assistant built directly into Excel. Use any AI model you already have, or connect OpenRouter for dozens of models with one login.'
   );
 
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userEmail } = useAuth();
   const addIn = getAddIn();
   const [countdown, setCountdown] = useState(() => calcCountdown(addIn.releaseDate));
+  const [earlyStatus, setEarlyStatus] = useState(null); // null | 'pending' | 'approved' | 'rejected'
+  const [requesting, setRequesting] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setCountdown(calcCountdown(addIn.releaseDate)), 1000);
     return () => clearInterval(id);
   }, [addIn.releaseDate]);
 
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    getMyEarlyAccessStatus().then((s) => setEarlyStatus(s));
+  }, [isAuthenticated]);
+
   const launched = countdown?.launched ?? false;
+  const effectiveLaunched = launched || earlyStatus === 'approved';
+
+  const handleRequest = async () => {
+    if (!userEmail) return;
+    setRequesting(true);
+    try {
+      await requestAddinEarlyAccess(userEmail);
+      setEarlyStatus('pending');
+      toast.success('Request submitted! We will review it shortly.');
+    } catch {
+      toast.error('Could not submit request. Please try again.');
+    } finally {
+      setRequesting(false);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-white dark:bg-zinc-950 transition-colors duration-300">
@@ -79,7 +102,7 @@ export default function AddIn() {
             transition={{ duration: 0.8 }}
           >
             <span className="inline-block font-rubik text-xs font-bold px-3 py-1 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 mb-5">
-              {launched ? 'Live Now' : 'Launching Soon'}
+              {effectiveLaunched && !launched ? 'Early Access' : launched ? 'Live Now' : 'Launching Soon'}
             </span>
             <h1 className="font-display text-4xl md:text-6xl font-bold text-zinc-900 dark:text-white mb-5">
               Atrail AI <Highlight>for Excel</Highlight>
@@ -92,8 +115,8 @@ export default function AddIn() {
             </p>
           </motion.div>
 
-          {/* Countdown or Download */}
-          {!launched ? (
+          {/* Countdown / Early Access Request / Download */}
+          {!effectiveLaunched ? (
             <motion.div
               className="flex flex-col items-center mb-16"
               initial={{ opacity: 0, y: 20 }}
@@ -110,7 +133,33 @@ export default function AddIn() {
                 <div className="text-3xl font-bold text-zinc-400 mt-5">:</div>
                 <CountdownBox value={countdown?.s ?? 0} label="Secs" />
               </div>
-              <p className="font-rubik text-sm text-zinc-400 dark:text-zinc-500 mt-6">Free for everyone · Requires sign-in to download</p>
+
+              {/* Early access request */}
+              <div className="mt-10 flex flex-col items-center gap-3">
+                {!isAuthenticated ? (
+                  <Link
+                    to="/login"
+                    className="inline-flex items-center gap-2 border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-6 py-3 rounded-full font-semibold text-sm hover:border-brand-500 hover:text-brand-600 dark:hover:text-brand-400 transition-all"
+                  >
+                    <Lock size={14} /> Sign in to request early access
+                  </Link>
+                ) : earlyStatus === 'pending' ? (
+                  <div className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-zinc-100 dark:bg-zinc-800 text-zinc-500 dark:text-zinc-400 text-sm font-medium">
+                    <Clock size={14} /> Request submitted, awaiting approval
+                  </div>
+                ) : earlyStatus === 'rejected' ? (
+                  <p className="text-sm text-zinc-400 dark:text-zinc-500">Early access request was not approved.</p>
+                ) : (
+                  <button
+                    onClick={handleRequest}
+                    disabled={requesting}
+                    className="inline-flex items-center gap-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-6 py-3 rounded-full font-semibold text-sm hover:opacity-80 transition-all disabled:opacity-50"
+                  >
+                    {requesting ? 'Submitting...' : 'Request Early Access'}
+                  </button>
+                )}
+                <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500">Free for everyone · Sign in to request early access</p>
+              </div>
             </motion.div>
           ) : (
             <motion.div
@@ -193,8 +242,8 @@ export default function AddIn() {
           </motion.div>
         </div>
 
-        {/* Installation + Guide — only shown after launch */}
-        {launched ? (
+        {/* Installation + Guide — only shown after effective launch */}
+        {effectiveLaunched ? (
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
 
             {/* Requirements */}

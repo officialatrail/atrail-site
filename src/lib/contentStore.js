@@ -213,6 +213,34 @@ export async function revokeEmail(email) {
   if (error) throw error;
 }
 
+// Add-in early access
+export async function requestAddinEarlyAccess(email) {
+  const { error } = await supabase
+    .from('addin_early_access')
+    .upsert({ email }, { onConflict: 'email', ignoreDuplicates: true });
+  if (error) throw error;
+}
+
+export async function getMyEarlyAccessStatus() {
+  const { data, error } = await supabase
+    .from('addin_early_access')
+    .select('status')
+    .maybeSingle();
+  if (error) return null;
+  return data?.status ?? null;
+}
+
+export async function fetchEarlyAccessRequests() {
+  const { data, error } = await supabase.rpc('fetch_early_access_requests');
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function setEarlyAccessStatus(id, status) {
+  const { error } = await supabase.rpc('set_early_access_status', { p_id: id, p_status: status });
+  if (error) throw error;
+}
+
 export async function isMyEmailApproved() {
   const mine = getMyEmail();
   if (!mine) return false;

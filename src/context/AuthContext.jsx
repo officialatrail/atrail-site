@@ -48,10 +48,11 @@ export function AuthProvider({ children }) {
 
   const isAuthenticated = !!session;
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
+  const userEmail = session?.user?.email ?? null;
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, isAdmin, loading, login, signUp, sendPasswordReset, updatePassword, logout }}
+      value={{ isAuthenticated, isAdmin, loading, login, signUp, sendPasswordReset, updatePassword, logout, userEmail }}
     >
       {children}
     </AuthContext.Provider>

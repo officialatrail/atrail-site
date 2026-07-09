@@ -18,6 +18,7 @@ import {
   getAbout, saveAbout,
   getComingSoon, saveComingSoon,
   getAddIn, saveAddIn,
+  fetchEarlyAccessRequests, setEarlyAccessStatus,
   fetchWaitlist,
   fetchExclusiveRequests, fetchApprovedEmails, approveEmail, revokeEmail,
   fetchAllUsers,
@@ -977,44 +978,145 @@ function AddInAdmin() {
   const update = (field, value) => setData({ ...data, [field]: value });
   const save = () => persist(saveAddIn, data, 'Add-in settings saved');
 
+  const [requests, setRequests] = useState([]);
+  const [reqLoading, setReqLoading] = useState(true);
+
+  const loadRequests = async () => {
+    try {
+      const rows = await fetchEarlyAccessRequests();
+      setRequests(rows);
+    } catch {
+      toast.error('Could not load early access requests');
+    } finally {
+      setReqLoading(false);
+    }
+  };
+
+  useEffect(() => { loadRequests(); }, []);
+
+  const handleStatus = async (id, status) => {
+    try {
+      await setEarlyAccessStatus(id, status);
+      setRequests((prev) => prev.map((r) => r.id === id ? { ...r, status } : r));
+      toast.success(status === 'approved' ? 'Approved' : 'Rejected');
+    } catch {
+      toast.error('Could not update status');
+    }
+  };
+
+  const pending = requests.filter((r) => r.status === 'pending');
+  const approved = requests.filter((r) => r.status === 'approved');
+  const rejected = requests.filter((r) => r.status === 'rejected');
+
+  const statusBadge = (s) => {
+    if (s === 'approved') return <span className="text-xs font-semibold text-brand-600 dark:text-brand-400 bg-brand-50 dark:bg-brand-900/20 px-2 py-0.5 rounded-full">Approved</span>;
+    if (s === 'rejected') return <span className="text-xs font-semibold text-red-500 bg-red-50 dark:bg-red-900/20 px-2 py-0.5 rounded-full">Rejected</span>;
+    return <span className="text-xs font-semibold text-amber-500 bg-amber-50 dark:bg-amber-900/20 px-2 py-0.5 rounded-full">Pending</span>;
+  };
+
   return (
-    <div className={cardClass}>
-      <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-6">
-        Controls the Excel Add-in section shown on the homepage, Tools page, header banner, and the <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-xs">/addin</code> page.
-      </p>
-      <Field label="Release Date & Time (local time — countdown targets this)">
-        <input
-          className={inputClass}
-          type="datetime-local"
-          value={data.releaseDate?.slice(0, 16) || ''}
-          onChange={(e) => update('releaseDate', e.target.value + ':00')}
-        />
-      </Field>
-      <Field label="Download URL (.xll file link)">
-        <input
-          className={inputClass}
-          value={data.downloadUrl || ''}
-          onChange={(e) => update('downloadUrl', e.target.value)}
-          placeholder="https://github.com/..."
-        />
-      </Field>
-      <Field label="Demo GIF or image URL (shown as preview — leave blank for placeholder)">
-        <ImageUpload onUploaded={(url) => update('gifUrl', url)} />
-        <input
-          className={inputClass}
-          value={data.gifUrl || ''}
-          onChange={(e) => update('gifUrl', e.target.value)}
-          placeholder="https://... or upload above"
-        />
-        {data.gifUrl && (
-          <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700 max-w-sm">
-            <img src={data.gifUrl} alt="Preview" className="w-full" />
+    <div className="space-y-6">
+      {/* Settings */}
+      <div className={cardClass}>
+        <p className="font-rubik text-sm text-zinc-500 dark:text-zinc-400 mb-6">
+          Controls the Excel Add-in section shown on the homepage, Tools page, header banner, and the <code className="bg-zinc-100 dark:bg-zinc-800 px-1 rounded text-xs">/addin</code> page.
+        </p>
+        <Field label="Release Date & Time (local time — countdown targets this)">
+          <input
+            className={inputClass}
+            type="datetime-local"
+            value={data.releaseDate?.slice(0, 16) || ''}
+            onChange={(e) => update('releaseDate', e.target.value + ':00')}
+          />
+        </Field>
+        <Field label="Download URL (.xll file link)">
+          <input
+            className={inputClass}
+            value={data.downloadUrl || ''}
+            onChange={(e) => update('downloadUrl', e.target.value)}
+            placeholder="https://github.com/..."
+          />
+        </Field>
+        <Field label="Demo GIF or image URL (shown as preview — leave blank for placeholder)">
+          <ImageUpload onUploaded={(url) => update('gifUrl', url)} />
+          <input
+            className={inputClass}
+            value={data.gifUrl || ''}
+            onChange={(e) => update('gifUrl', e.target.value)}
+            placeholder="https://... or upload above"
+          />
+          {data.gifUrl && (
+            <div className="mt-3 rounded-xl overflow-hidden border border-slate-200 dark:border-zinc-700 max-w-sm">
+              <img src={data.gifUrl} alt="Preview" className="w-full" />
+            </div>
+          )}
+        </Field>
+        <button onClick={save} className={saveBtnClass}>
+          <Save size={14} /> Save
+        </button>
+      </div>
+
+      {/* Early Access Requests */}
+      <div className={cardClass}>
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h3 className="font-rubik font-bold text-zinc-900 dark:text-white text-base">Early Access Requests</h3>
+            <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-0.5">
+              {pending.length} pending · {approved.length} approved · {rejected.length} rejected
+            </p>
+          </div>
+          <button
+            onClick={loadRequests}
+            className="text-xs font-rubik text-zinc-500 dark:text-zinc-400 hover:text-brand-600 dark:hover:text-brand-400 transition-colors"
+          >
+            Refresh
+          </button>
+        </div>
+
+        {reqLoading ? (
+          <p className="font-rubik text-sm text-zinc-400 dark:text-zinc-500">Loading...</p>
+        ) : requests.length === 0 ? (
+          <p className="font-rubik text-sm text-zinc-400 dark:text-zinc-500">No requests yet.</p>
+        ) : (
+          <div className="space-y-2">
+            {requests.map((r) => (
+              <div
+                key={r.id}
+                className="flex items-center justify-between gap-4 py-3 px-4 rounded-xl bg-zinc-50 dark:bg-zinc-800/50"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <Mail size={14} className="text-zinc-400 shrink-0" />
+                  <span className="font-rubik text-sm text-zinc-800 dark:text-zinc-200 truncate">{r.email}</span>
+                  <span className="font-rubik text-xs text-zinc-400 shrink-0">
+                    {new Date(r.created_at).toLocaleDateString()}
+                  </span>
+                </div>
+                <div className="flex items-center gap-2 shrink-0">
+                  {statusBadge(r.status)}
+                  {r.status !== 'approved' && (
+                    <button
+                      onClick={() => handleStatus(r.id, 'approved')}
+                      className="p-1.5 rounded-lg bg-brand-50 dark:bg-brand-900/20 text-brand-600 dark:text-brand-400 hover:bg-brand-100 dark:hover:bg-brand-900/40 transition-colors"
+                      title="Approve"
+                    >
+                      <Check size={13} />
+                    </button>
+                  )}
+                  {r.status !== 'rejected' && (
+                    <button
+                      onClick={() => handleStatus(r.id, 'rejected')}
+                      className="p-1.5 rounded-lg bg-red-50 dark:bg-red-900/20 text-red-500 hover:bg-red-100 dark:hover:bg-red-900/40 transition-colors"
+                      title="Reject"
+                    >
+                      <XIcon size={13} />
+                    </button>
+                  )}
+                </div>
+              </div>
+            ))}
           </div>
         )}
-      </Field>
-      <button onClick={save} className={saveBtnClass}>
-        <Save size={14} /> Save
-      </button>
+      </div>
     </div>
   );
 }
