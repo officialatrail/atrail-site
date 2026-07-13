@@ -114,6 +114,12 @@ export default function AddIn() {
             <p className="font-rubik text-sm text-zinc-400 dark:text-zinc-500 mt-3">
               Supports Claude · GPT-4 · DeepSeek · Grok · Gemini · OpenRouter
             </p>
+            <div className="mt-5">
+              <span className="inline-flex items-center gap-2.5 bg-zinc-100 dark:bg-zinc-800 rounded-full px-4 py-2">
+                <span className="font-rubik text-xs font-bold text-brand-600 dark:text-brand-400 uppercase tracking-widest">BYOK</span>
+                <span className="font-rubik text-xs text-zinc-500 dark:text-zinc-400">Bring Your Own Key — connect your API key directly. No Atrail subscription needed.</span>
+              </span>
+            </div>
           </motion.div>
 
           {/* Countdown / Early Access Request / Download */}
@@ -206,13 +212,13 @@ export default function AddIn() {
                   download
                   className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl hover:shadow-2xl"
                 >
-                  <Download size={20} /> Download Atrail AI for Excel (.xll)
+                  <Download size={20} /> Download Add-in
                 </a>
               ) : (
                 <div className="flex flex-col items-center gap-4">
                   <div className="relative">
                     <div className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg filter blur-[3px] select-none pointer-events-none">
-                      <Download size={20} /> Download Atrail AI for Excel (.xll)
+                      <Download size={20} /> Download Add-in
                     </div>
                     <div className="absolute inset-0 flex items-center justify-center">
                       <Link
@@ -228,7 +234,7 @@ export default function AddIn() {
               )}
               {isAuthenticated && (
                 <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-3">
-                  Windows 10/11 · Excel 2016+ (64-bit) · Requires .NET 10 Desktop Runtime
+                  Windows 10/11 · Excel 2016+ (64-bit)
                 </p>
               )}
             </motion.div>
@@ -288,23 +294,16 @@ export default function AddIn() {
             >
               <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-6">Requirements</h2>
               <ul className="space-y-3">
-                {['Windows 10 or 11', 'Excel 2016 or later (64-bit)', '.NET 10 Desktop Runtime (free, about 25 MB, one-time install from Microsoft)'].map((r) => (
+                {['Windows 10 or 11', 'Excel 2016 or later (64-bit)'].map((r) => (
                   <li key={r} className="flex items-start gap-3 text-sm text-zinc-700 dark:text-zinc-300 font-rubik">
                     <CheckCircle size={16} className="text-brand-600 dark:text-brand-400 mt-0.5 shrink-0" />
-                    {r === '.NET 10 Desktop Runtime (free, about 25 MB, one-time install from Microsoft)' ? (
-                      <span>
-                        <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0" target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 underline hover:text-brand-700">
-                          .NET 10 Desktop Runtime
-                        </a>
-                        {' '}(free, about 25 MB, one-time install from Microsoft)
-                      </span>
-                    ) : r}
+                    {r}
                   </li>
                 ))}
               </ul>
             </motion.div>
 
-            {/* Installation */}
+            {/* How to Use */}
             <motion.div
               className="bg-white dark:bg-zinc-900 rounded-3xl border border-slate-100 dark:border-zinc-800 p-8 sm:p-10 shadow-sm"
               initial={{ opacity: 0, y: 20 }}
@@ -312,24 +311,53 @@ export default function AddIn() {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-6">Installation</h2>
-              <ol className="space-y-4">
-                {[
-                  <>Install <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0" target="_blank" rel="noopener noreferrer" className="text-brand-600 dark:text-brand-400 underline hover:text-brand-700">.NET 10 Desktop Runtime</a> if you haven't already</>,
-                  'Download Atrail Excel Addin.xll using the button above',
-                  'Open Excel, go to File, then Options, then Add-ins',
-                  'Set "Manage" to Excel Add-ins and click Go',
-                  'Click Browse, select the .xll file, click OK',
-                  'Tick the checkbox next to Atrail AI and click OK',
-                ].map((step, i) => (
-                  <li key={i} className="flex items-start gap-4 font-rubik text-sm text-zinc-700 dark:text-zinc-300">
-                    <span className="shrink-0 w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold">{i + 1}</span>
-                    <span className="mt-0.5">{step}</span>
-                  </li>
-                ))}
-              </ol>
-              <div className="mt-6 bg-zinc-50 dark:bg-zinc-800 rounded-xl px-5 py-3 text-sm font-rubik text-zinc-600 dark:text-zinc-300">
-                To reopen the panel later: <strong>Add-ins tab then Atrail AI</strong>
+              <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-8">How to Use</h2>
+
+              <div className="mb-8">
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="font-rubik text-xs font-bold bg-zinc-100 dark:bg-zinc-800 text-zinc-600 dark:text-zinc-300 px-3 py-1 rounded-full uppercase tracking-wide">Option A</span>
+                  <h3 className="font-rubik font-bold text-zinc-900 dark:text-white">Quick try — single session</h3>
+                </div>
+                <ol className="space-y-3">
+                  {[
+                    'Download the XLL file using the button above',
+                    'Double-click it — Excel opens and asks to enable it',
+                    'Click "Enable for this session only"',
+                    'The Atrail tab appears in your Excel ribbon',
+                  ].map((step, i) => (
+                    <li key={i} className="flex items-start gap-4 font-rubik text-sm text-zinc-700 dark:text-zinc-300">
+                      <span className="shrink-0 w-7 h-7 rounded-full bg-zinc-200 dark:bg-zinc-700 text-zinc-700 dark:text-zinc-200 flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                      <span className="mt-0.5">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+                <p className="font-rubik text-xs text-zinc-400 dark:text-zinc-500 mt-3">The add-in is not saved permanently — you repeat this each session.</p>
+              </div>
+
+              <div className="border-t border-slate-100 dark:border-zinc-800 mb-8" />
+
+              <div>
+                <div className="flex items-center gap-2 mb-4">
+                  <span className="font-rubik text-xs font-bold bg-brand-600/10 text-brand-600 dark:text-brand-400 px-3 py-1 rounded-full uppercase tracking-wide">Option B</span>
+                  <h3 className="font-rubik font-bold text-zinc-900 dark:text-white">Permanent install — recommended</h3>
+                </div>
+                <ol className="space-y-3">
+                  {[
+                    'Download the XLL file and save it somewhere you will not move it',
+                    'In Excel go to File → Options → Add-ins',
+                    'At the bottom, set Manage to Excel Add-ins and click Go',
+                    'Click Browse, find the XLL file, and click OK',
+                    'The add-in now loads automatically every time Excel opens',
+                  ].map((step, i) => (
+                    <li key={i} className="flex items-start gap-4 font-rubik text-sm text-zinc-700 dark:text-zinc-300">
+                      <span className="shrink-0 w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold">{i + 1}</span>
+                      <span className="mt-0.5">{step}</span>
+                    </li>
+                  ))}
+                </ol>
+                <div className="mt-6 bg-zinc-50 dark:bg-zinc-800 rounded-xl px-5 py-3 text-sm font-rubik text-zinc-600 dark:text-zinc-300">
+                  To reopen the panel later: <strong>Atrail tab in the Excel ribbon</strong>
+                </div>
               </div>
             </motion.div>
 
@@ -437,7 +465,7 @@ export default function AddIn() {
               <h2 className="font-display text-2xl font-bold text-zinc-900 dark:text-white mb-6">Troubleshooting</h2>
               <div className="space-y-5">
                 {[
-                  { q: 'Add-in did not load', a: 'Install .NET 10 Desktop Runtime and restart Excel.' },
+                  { q: 'Add-in did not load', a: 'Make sure Excel is 64-bit and version 2016 or later. Close Excel fully and try double-clicking the XLL again, or re-add it through File → Options → Add-ins.' },
                   { q: 'No API key message', a: 'Open settings in the panel and add your key or connect OpenRouter.' },
                   { q: 'HTTP 401 error', a: 'Your key is invalid or expired. Disconnect and reconnect OpenRouter, or check the key in your provider dashboard.' },
                   { q: 'Panel does not open', a: 'Go to the Add-ins tab in Excel\'s ribbon and click Atrail AI.' },
@@ -477,7 +505,7 @@ export default function AddIn() {
                   download
                   className="inline-flex items-center gap-2 bg-brand-600 text-white px-8 py-4 rounded-full font-semibold text-lg hover:bg-brand-700 transition-all duration-200 shadow-xl"
                 >
-                  <Download size={20} /> Download Now, It's Free
+                  <Download size={20} /> Download Add-in
                 </a>
               </motion.div>
             )}
@@ -498,7 +526,7 @@ export default function AddIn() {
               </div>
               <div className="relative bg-white dark:bg-zinc-900 px-8 py-8 filter blur-[3px] select-none pointer-events-none">
                 <div className="space-y-4">
-                  {['Install .NET 10 Desktop Runtime', 'Download Atrail Excel Addin.xll', 'Open Excel, go to File then Options then Add-ins', 'Browse to the .xll file and tick Atrail AI'].map((s, i) => (
+                  {['Download Atrail Excel Addin.xll', 'Open Excel, go to File then Options then Add-ins', 'Browse to the .xll file and tick Atrail AI'].map((s, i) => (
                     <div key={i} className="flex items-center gap-4">
                       <span className="w-7 h-7 rounded-full bg-brand-600 text-white flex items-center justify-center text-xs font-bold shrink-0">{i + 1}</span>
                       <span className="font-rubik text-sm text-zinc-700 dark:text-zinc-300">{s}</span>

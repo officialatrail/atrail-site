@@ -116,13 +116,21 @@ export default function AddInSection() {
             </p>
 
             {/* Feature boxes */}
-            <div className="grid grid-cols-2 gap-3 mb-8">
+            <div className="grid grid-cols-2 gap-3 mb-5">
               {FEATURES.map((f) => (
                 <div key={f.title} className="rounded-xl bg-brand-600 p-5">
                   <p className="font-display text-base font-bold text-white mb-2">{f.title}</p>
                   <p className="font-rubik text-sm text-brand-100 leading-relaxed">{f.desc}</p>
                 </div>
               ))}
+            </div>
+
+            {/* BYOK badge */}
+            <div className="mb-8">
+              <span className="inline-flex items-center gap-2 bg-white/10 rounded-full px-4 py-1.5">
+                <span className="font-rubik text-xs font-bold text-brand-400 uppercase tracking-widest">BYOK</span>
+                <span className="font-rubik text-xs text-zinc-400">Bring Your Own Key — connect your own API key. No Atrail subscription needed.</span>
+              </span>
             </div>
 
             {effectiveLaunched ? (
@@ -133,7 +141,7 @@ export default function AddInSection() {
                     download
                     className="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all shadow-lg"
                   >
-                    <Download size={16} /> Download Free (.xll)
+                    <Download size={16} /> Download Add-in
                   </a>
                   <Link
                     to="/addin"
