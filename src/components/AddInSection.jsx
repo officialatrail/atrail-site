@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Download, Lock, ArrowRight, Clock } from 'lucide-react';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
-import { getAddIn, requestAddinEarlyAccess, getMyEarlyAccessStatus } from '../lib/contentStore';
+import { getAddIn, requestAddinEarlyAccess, getMyEarlyAccessStatus, sendNotification, getMyAlias } from '../lib/contentStore';
 import Highlight from './Highlight';
 
 function calcCountdown(targetDate) {
@@ -69,6 +69,12 @@ export default function AddInSection() {
 
   const launched = countdown?.launched ?? false;
   const effectiveLaunched = launched || earlyStatus === 'approved';
+
+  const trackDownload = () => {
+    getMyAlias().then((alias) => {
+      sendNotification({ type: 'addin_download', userEmail: userEmail ?? null, productName: 'Atrail AI for Excel Add-in', userName: alias });
+    });
+  };
 
   const handleRequest = async () => {
     if (!userEmail) return;
@@ -139,6 +145,7 @@ export default function AddInSection() {
                   <a
                     href={addIn.downloadUrl}
                     download
+                    onClick={trackDownload}
                     className="inline-flex items-center gap-2 bg-brand-600 text-white px-6 py-3 rounded-full font-semibold text-sm hover:bg-brand-700 transition-all shadow-lg"
                   >
                     <Download size={16} /> Download Add-in

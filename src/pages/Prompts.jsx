@@ -5,7 +5,7 @@ import { Copy, Check, CheckCircle, ChevronDown, ChevronUp, Lock } from 'lucide-r
 import { toast } from 'react-toastify';
 import LikeButton from '../components/LikeButton';
 import SearchSortBar from '../components/SearchSortBar';
-import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getLikeCount } from '../lib/contentStore';
+import { getPrompts, requestExclusiveAccess, isMyEmailApproved, getMyEmail, getLikeCount, sendNotification, getMyAlias } from '../lib/contentStore';
 import useDocumentHead from '../lib/useDocumentHead';
 import Highlight from '../components/Highlight';
 import { useAuth } from '../context/AuthContext';
@@ -22,7 +22,7 @@ export default function Prompts() {
     'The Prompt Library | Atrail',
     'AI prompts for workflow automation. Copy, paste, adapt.'
   );
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, userEmail } = useAuth();
   const [copiedKey, setCopiedKey] = useState(null);
   const prompts = getPrompts();
   const [unlocked, setUnlocked] = useState(false);
@@ -42,6 +42,9 @@ export default function Prompts() {
     setCopiedKey(key);
     toast.success('Prompt copied to clipboard');
     setTimeout(() => setCopiedKey(null), 2000);
+    getMyAlias().then((alias) => {
+      sendNotification({ type: 'prompt_copy', userEmail: userEmail ?? null, productName: key, userName: alias });
+    });
   };
 
   const toggleExpanded = (key) => setExpanded((prev) => ({ ...prev, [key]: !prev[key] }));

@@ -5,9 +5,18 @@ import { Play, Lock, ArrowRight } from 'lucide-react';
 import { platforms } from '../lib/platformIcons';
 import BorderBeam from './BorderBeam';
 import LikeButton from './LikeButton';
+import { useAuth } from '../context/AuthContext';
+import { sendNotification, getMyAlias } from '../lib/contentStore';
 
 export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) {
   const platformInfo = tool.platform ? platforms[tool.platform] : null;
+  const { userEmail } = useAuth();
+
+  const trackOpen = () => {
+    getMyAlias().then((alias) => {
+      sendNotification({ type: 'tool_open', userEmail: userEmail ?? null, productName: tool.name, userName: alias });
+    });
+  };
 
   const inner = (
     <>
@@ -91,14 +100,14 @@ export default function ToolCard({ tool, locked, requiresSignIn, onPlayVideo }) 
 
   if (tool.link?.type === 'video') {
     return (
-      <button onClick={() => onPlayVideo?.(tool.link.value)} className={`${className} text-left w-full`}>
+      <button onClick={() => { trackOpen(); onPlayVideo?.(tool.link.value); }} className={`${className} text-left w-full`}>
         {inner}
       </button>
     );
   }
 
   return (
-    <a href={tool.link?.value} target="_blank" rel="noopener noreferrer" className={className}>
+    <a href={tool.link?.value} target="_blank" rel="noopener noreferrer" onClick={trackOpen} className={className}>
       {inner}
     </a>
   );

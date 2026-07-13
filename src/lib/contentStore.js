@@ -243,10 +243,10 @@ export async function setEarlyAccessStatus(id, status) {
   if (error) throw error;
 }
 
-export async function sendNotification({ type, userEmail, productName }) {
+export async function sendNotification({ type, userEmail, productName, userName = null }) {
   try {
     await supabase.functions.invoke('send-notification', {
-      body: { type, userEmail, productName },
+      body: { type, userEmail: userEmail ?? 'anonymous', productName, userName },
     });
   } catch {}
 }
